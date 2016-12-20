@@ -1,0 +1,9 @@
+# expmon: the expiration month, sometimes contracts expire in the prev month,,,,,,,,,,
+# expday: which day of the expiring month,,,,,,,,,,,
+symbol,market,type,description,currency,point_size,slippage,carryoffset,rollcycle,rolloffset,expmon,expday
+ED,CME,Finance,Eurodollar,USD,2500,0.0025,-3,HMUZ,440,curr,15
+FV,CME,Finance,US 5-Year Treasury,USD,1000,0.004,3,HMUZ,50,curr,30
+FESX,EUREX,Finance,Eurostoxx,EUR,10,0.5,3,HMUZ,90,curr,11
+FVS,EUREX,Finance,EURO STOXX 50 Volatility,EUR,100,0.0255,-1,FGHJKMNQUVXZ,60,curr,15
+MP,CME,Finance,Mexican Peso USD Fx,USD,500000,0.000011567,3,HMUZ,30,curr,15
+C,CME,Food,Corn,USD,50,0.125,-3,Z,90,curr,14
