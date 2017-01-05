@@ -84,6 +84,5 @@ Note that the FillEvent is given a value of None for the fill_cost (see the penu
 line in execute_order) as we have already taken care of the cost of fill in the Portfolio object
 described above. In a more realistic implementation we would make use of the "current" market
 data value to obtain a realistic fill cost.
-I have simply utilised ARCA as the exchange although for backtesting purposes this is purely
-a string placeholder.
+I have simply utilised 'Simulated Mkt' as the exchange although for backtesting purposes.
 """
