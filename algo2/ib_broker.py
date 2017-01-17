@@ -10,10 +10,10 @@ from ib.ext.Order import Order
 from ib.opt import ibConnection, message
 
 from .event import FillEvent, OrderEvent
-from .execution import ExecutionHandler
+from Algo2.broker import Broker
 
 
-class IBExecutionHandler(ExecutionHandler):
+class IB_Broker(Broker):
     """
     Handles order execution via the Interactive Brokers
     API, for use against accounts when trading live
@@ -22,7 +22,7 @@ class IBExecutionHandler(ExecutionHandler):
 
     def __init__(self, events, order_routing="SMART", currency="USD"):
         """
-        Initialises the IBExecutionHandler instance.
+        Initialises the IBBroker instance.
 
         Parameters:
         events - The Queue of Event objects.

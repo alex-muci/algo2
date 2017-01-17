@@ -21,7 +21,7 @@ class Backtest(object):
     def __init__(
         self, csv_dir, symbol_list, initial_capital,
         heartbeat, start_date, data_handler, 
-        execution_handler, portfolio, strategy
+        broker, portfolio, strategy
     ):
         """
         Initialises the backtest.
@@ -33,7 +33,7 @@ class Backtest(object):
         heartbeat - Backtest "heartbeat" in seconds
         start_date - The start datetime of the strategy.
         data_handler - (Class) Handles the market data feed.
-        execution_handler - (Class) Handles the orders/fills for trades.
+        broker - (Class) Handles the orders/fills for trades.
         portfolio - (Class) Keeps track of portfolio current and prior positions.
         strategy - (Class) Generates signals based on market data.
         """
@@ -44,7 +44,7 @@ class Backtest(object):
         self.start_date = start_date
 
         self.data_handler_cls = data_handler
-        self.execution_handler_cls = execution_handler
+        self.broker_cls = broker
         self.portfolio_cls = portfolio
         self.strategy_cls = strategy
 
@@ -63,13 +63,13 @@ class Backtest(object):
         their class types.
         """
         print(
-            "Creating DataHandler, Strategy, Portfolio and ExecutionHandler"
+            "Creating DataFeed, Strategy, Portfolio and Broker"
         )
         self.data_handler = self.data_handler_cls(self.events, self.csv_dir, self.symbol_list)
         self.strategy = self.strategy_cls(self.data_handler, self.events)
         self.portfolio = self.portfolio_cls(self.data_handler, self.events, self.start_date, 
                                             self.initial_capital)
-        self.execution_handler = self.execution_handler_cls(self.events)
+        self.broker = self.broker_cls(self.events)
 
     def _run_backtest(self):
         """
@@ -104,7 +104,7 @@ class Backtest(object):
 
                         elif event.type == 'ORDER':
                             self.orders += 1
-                            self.execution_handler.execute_order(event)
+                            self.broker.execute_order(event)
 
                         elif event.type == 'FILL':
                             self.fills += 1

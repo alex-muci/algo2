@@ -10,19 +10,18 @@ import numpy as np
 #import pandas as pd
 #import statsmodels.api as sm
 
+from Algo2.feeds.csv_files import HistoricCSVDataHandler
 from Algo2.strategy import Strategy
 from Algo2.event import SignalEvent
-from Algo2.backtesting import Backtest
-from Algo2.feeds.csv_files import HistoricCSVDataHandler
-from Algo2.execution import SimulatedExecutionHandler
 from Algo2.portfolio import Portfolio
-
+from Algo2.broker import SimulatedBroker
+from Algo2.backtesting import Backtest
 
 class MovingAverageCrossStrategy(Strategy):
     """
-    Carries out a basic Moving Average Crossover strategy with a
-    short/long simple weighted moving average. Default short/long
-    windows are 50/200 periods respectively.
+    Basic Moving Average Crossover strategy with a
+    short/long simple weighted moving average. Default short and long
+    windows are 50 and 200 periods.
     """
 
     def __init__(
@@ -101,7 +100,7 @@ if __name__ == "__main__":
 
     backtest = Backtest(
         csv_dir, symbol_list, initial_capital, heartbeat, 
-        start_date, HistoricCSVDataHandler, SimulatedExecutionHandler, 
+        start_date, HistoricCSVDataHandler, SimulatedBroker, 
         Portfolio, MovingAverageCrossStrategy
     )
     backtest.simulate_trading()
