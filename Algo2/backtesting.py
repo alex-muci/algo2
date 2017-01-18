@@ -74,43 +74,36 @@ class Backtest(object):
     def _run_backtest(self):
         """
         Executes the backtest.
-        """
+        """        
         print("Running backtesting...")
         i = 0
-        while True:
+        while self.data_handler.continue_backtest:
             i += 1
             print(i)
-            # Update the market bars
-            if self.data_handler.continue_backtest == True:
-                self.data_handler.update_bars()
-            else:
-                break
-
+            self.data_handler.update_bars() # MarketEvent here, see implementation of data_handler
             # Handle the events
-            while True:
-                try:
-                    event = self.events.get(False)
-                except queue.Empty:
-                    break
-                else:
-                    if event is not None:
-                        if event.type == 'MARKET':
-                            self.strategy.calculate_signals(event)
-                            self.portfolio.update_timeindex(event)
+            try:
+                event = self.events.get(False)
+            except queue.Empty:
+                break
+            else:
+                if event is not None:
+                    if event.type == 'MARKET':
+                        self.strategy.calculate_signals(event)
+                        self.portfolio.update_timeindex(event)
+                    elif event.type == 'SIGNAL': # or == EventType.SIGNAL
+                        self.signals += 1                            
+                        self.portfolio.update_signal(event)
+                    elif event.type == 'ORDER':
+                        self.orders += 1
+                        self.broker.execute_order(event)                        
+                    elif event.type == 'FILL':
+                        self.fills += 1
+                        self.portfolio.update_fill(event)#
+                    else:
+                        raise NotImplemented("Unsupported event.type '%s'" % event.type)
 
-                        elif event.type == 'SIGNAL':
-                            self.signals += 1                            
-                            self.portfolio.update_signal(event)
-
-                        elif event.type == 'ORDER':
-                            self.orders += 1
-                            self.broker.execute_order(event)
-
-                        elif event.type == 'FILL':
-                            self.fills += 1
-                            self.portfolio.update_fill(event)
-
-            time.sleep(self.heartbeat)
+        time.sleep(self.heartbeat)
 
     def _output_performance(self):
         """

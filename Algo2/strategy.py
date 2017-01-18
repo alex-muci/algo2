@@ -4,19 +4,19 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from abc import ABCMeta, abstractmethod
-import datetime
+#import datetime
 
-try:
-    import Queue as queue
-except ImportError:
-    import queue
+#try:
+#    import Queue as queue
+#except ImportError:
+#    import queue
 
-import numpy as np
-import pandas as pd
+#import numpy as np
+#import pandas as pd
 
-from .event import SignalEvent
+#from .event import SignalEvent
 
-# we can decompose Strategy in two classes: Strategy + Indicator, here the Strategy class encompasses both
+## we may decompose Strategy in two classes: Strategy + Indicator, here the Strategy class encompasses both
 
 class Strategy(object):
     """

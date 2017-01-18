@@ -149,7 +149,7 @@ class HistoricCSVDataHandler(DataHandler):
         """
         for s in self.symbol_list:
             try: 
-                bar = next(self._get_new_bar(s))
+                bar = next(self._get_new_bar(s)) # Retrieve the next item from the iterator by calling its next() method,  if exhausted StopIteration is raised.
             except StopIteration:
                 self.continue_backtest = False
             else:

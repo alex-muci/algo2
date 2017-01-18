@@ -13,7 +13,7 @@ import numpy as np
 from Algo2.feeds.csv_files import HistoricCSVDataHandler
 from Algo2.strategy import Strategy
 from Algo2.event import SignalEvent
-from Algo2.portfolio import Portfolio
+from Algo2.old_portfolio import Portfolio  # TO BE UPDATED
 from Algo2.broker import SimulatedBroker
 from Algo2.backtesting import Backtest
 

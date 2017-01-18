@@ -3,21 +3,28 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+
+from enum import Enum
+EventType = Enum("EventType", "TICK BAR SIGNAL ORDER FILL")
+##########################################
 class Event(object):
     """
     Event is the base class, provinding an interface
     for all inherited that will be created/stored
+    
+    @property
+    def typename(self):
+        return self.type.name
     """
     pass
 
-
+##########################################
 class MarketEvent(Event):
     """
     Handles the event of receiving a new market update
     and triggers Strategy to generate signals.
     
     Datafeed ->  MarketEvent -> Strategy
-    TO DO: split in BAR vs. TICK
     """
     def __init__(self):
         """
@@ -25,7 +32,133 @@ class MarketEvent(Event):
         """
         self.type = 'MARKET'
 
+# MarketEvent 
+# can be expressed in one of the following ways:
+class TickEvent(Event):
+    """
+    Handles the event of receiving a new market update tick,
+    which is defined as a ticker symbol and associated best
+    bid and ask from the top of the order book.
+    """
+    def __init__(self, ticker, time, bid, ask):
+        """
+        Initialises the TickEvent.
 
+        Parameters:
+        ticker - The ticker symbol, e.g. 'GOOG'.
+        time - The timestamp of the tick
+        bid - The best bid price at the time of the tick.
+        ask - The best ask price at the time of the tick.
+        """
+        self.type = EventType.TICK # i.e. = "TICK" 
+        self.ticker = ticker
+        self.time = time
+        self.bid = bid
+        self.ask = ask
+
+    def __str__(self):
+        return "Type: %s, Ticker: %s, Time: %s, Bid: %s, Ask: %s" % (
+            str(self.type), str(self.ticker),
+            str(self.time), str(self.bid), str(self.ask)
+        )
+
+    def __repr__(self):
+        return str(self)
+
+
+class BarEvent(Event):
+    """
+    Handles the event of receiving a new market
+    open-high-low-close-volume bar, as would be generated
+    via common data providers such as Yahoo Finance.
+    """
+    def __init__(
+        self, ticker, time, period,
+        open_price, high_price, low_price,
+        close_price, volume, adj_close_price=None
+    ):
+        """
+        Initialises the BarEvent.
+
+        Parameters:
+        ticker - The ticker symbol, e.g. 'GOOG'.
+        time - The timestamp of the bar
+        period - The time period covered by the bar in seconds
+        open_price - The unadjusted opening price of the bar
+        high_price - The unadjusted high price of the bar
+        low_price - The unadjusted low price of the bar
+        close_price - The unadjusted close price of the bar
+        volume - The volume of trading within the bar
+        adj_close_price - The vendor adjusted closing price
+            (e.g. back-adjustment) of the bar
+
+        Note: It is not advised to use 'open', 'close' instead
+        of 'open_price', 'close_price' as 'open' is a reserved
+        word in Python.
+        """
+        self.type = EventType.BAR   # i.e. = "BAR" 
+        self.ticker = ticker
+        self.time = time
+        self.period = period
+        self.open_price = open_price
+        self.high_price = high_price
+        self.low_price = low_price
+        self.close_price = close_price
+        self.volume = volume
+        self.adj_close_price = adj_close_price
+        self.period_readable = self._readable_period()
+
+    def _readable_period(self):
+        """
+        Creates a human-readable period from the number
+        of seconds specified for 'period'.
+
+        For instance, converts:
+        * 1 -> '1sec'
+        * 5 -> '5secs'
+        * 60 -> '1min'
+        * 300 -> '5min'
+
+        If no period is found in the lookup table, the human
+        readable period is simply passed through from period,
+        in seconds.
+        """
+        lut = {
+            1: "1sec",
+            5: "5sec",
+            10: "10sec",
+            15: "15sec",
+            30: "30sec",
+            60: "1min",
+            300: "5min",
+            600: "10min",
+            900: "15min",
+            1800: "30min",
+            3600: "1hr",
+            86400: "1day",
+            604800: "1wk"
+        }
+        if self.period in lut:
+            return lut[self.period]
+        else:
+            return "%ssec" % str(self.period)
+
+    def __str__(self):
+        format_str = "Type: %s, Ticker: %s, Time: %s, Period: %s, " \
+            "Open: %s, High: %s, Low: %s, Close: %s, " \
+            "Adj Close: %s, Volume: %s" % (
+                str(self.type), str(self.ticker), str(self.time),
+                str(self.period_readable), str(self.open_price),
+                str(self.high_price), str(self.low_price),
+                str(self.close_price), str(self.adj_close_price),
+                str(self.volume)
+            )
+        return format_str
+
+    def __repr__(self):
+        return str(self)
+
+##########################################
 class SignalEvent(Event):
     """
     Handles the event of sending a Signal from a Strategy object.
@@ -50,8 +183,37 @@ class SignalEvent(Event):
         self.datetime = datetime
         self.signal_type = signal_type
         self.strength = strength
+##########################################
+class SuggestedOrderEvent(Event):
+    """
+    A SuggestedOrder object is generated by the PortfolioHandler
+    to be sent to the PositionSizer object and subsequently the
+    RiskManager object. Creating a separate object type for
+    suggested orders and final orders (OrderEvent objects) ensures
+    that a suggested order is never transacted unless it has been
+    scrutinised by the position sizing and risk management layers.
+    """
+    def __init__(self, symbol, order_type, quantity=0):
+        """
+        Initialises the SuggestedOrder. The quantity defaults
+        to zero as the PortfolioHandler creates these objects
+        prior to any position sizing.
 
+        The PositionSizer object will "fill in" the correct
+        value prior to sending the SuggestedOrder to the
+        RiskManager.
 
+        Parameters:
+        symbol - The ticker symbol, e.g. 'GOOG'.
+        order_type - 'BOT' (for long) or 'SLD' (for short)
+            or 'EXIT' (for liquidation).
+        quantity - The quantity of shares to transact.
+        """
+        self.symbol = symbol
+        self.order_type = order_type
+        self.quantity = quantity
+
+##########################################
 class OrderEvent(Event):
     """
     Handles the event of sending an Order to an execution system.
@@ -91,7 +253,7 @@ class OrderEvent(Event):
             (self.symbol, self.order_type, self.quantity, self.direction)
         )
 
-
+##########################################
 class FillEvent(Event):
     """
     Encapsulates the notion of a Filled Order, as returned
