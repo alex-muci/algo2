@@ -10,7 +10,7 @@ name_file = 'quandlapikey.txt'
 directory =  os.path.dirname(os.path.abspath(sys.argv[0])) 
 fname = os.path.join(directory , name_file)
 """
-api_key = open('quandlapikey.txt','r').read()  # txt file saved in same dir
+api_key = open('C:/Users/Alessandro/quandlapikey.txt','r').read()  # txt file saved in my usual directory
 quandl.ApiConfig.api_key = api_key  # = "YOUR_KEY_HERE"
 
 base_dir = "C:/Users/Alessandro/Downloads/futures" # where to be saved
