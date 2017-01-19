@@ -5,6 +5,7 @@ from __future__ import (absolute_import, division, print_function,
 import datetime, time
 import pprint
 import matplotlib.pyplot as plt
+from inspect import isclass # rather than use isistance(x, type) for new-class, which doesn't work for old-style one 
 
 try:
     import Queue as queue
@@ -42,35 +43,21 @@ class Backtest(object):
         self.initial_capital = initial_capital
         self.heartbeat = heartbeat
         self.start_date = start_date
-
-        self.data_handler_cls = data_handler
-        self.broker_cls = broker
-        self.portfolio_cls = portfolio
-        self.strategy_cls = strategy
-
-        self.events = queue.Queue() ######
-        
+     
+        self.events = queue.Queue() ###### <<<<  ########
+     
+        # you can input 1. class instances or 2. just their names (with backtesting generating the instances)
+        self.data_handler = data_handler(self.events, self.csv_dir, self.symbol_list) # data_handler if isclass(data_handler) else                                            
+        self.broker =    broker(self.events)
+        self.portfolio = portfolio(self.data_handler, self.events, self.start_date, self.initial_capital) 
+        self.strategy =  strategy(self.data_handler, self.events)
+ 
         self.signals = 0
         self.orders = 0
         self.fills = 0
         self.num_strats = 1
-       
-        self._generate_trading_instances()
 
-    def _generate_trading_instances(self):
-        """
-        Generates the trading instance objects from 
-        their class types.
-        """
-        print(
-            "Creating DataFeed, Strategy, Portfolio and Broker"
-        )
-        self.data_handler = self.data_handler_cls(self.events, self.csv_dir, self.symbol_list)
-        self.strategy = self.strategy_cls(self.data_handler, self.events)
-        self.portfolio = self.portfolio_cls(self.data_handler, self.events, self.start_date, 
-                                            self.initial_capital)
-        self.broker = self.broker_cls(self.events)
-
+    
     def _run_backtest(self):
         """
         Executes the backtest.

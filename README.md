@@ -1,12 +1,10 @@
 # Algo2
-Live trading and backtesting platform written in Python
+Live trading and backtesting platform written in Python.
 
 
-Very early draft:
+Very early draft (version 0.1):
 
-
-TO DO: split Portfolio into position / sizers / risk mgt
-
-TO DO: futures (init & var margins)
+TO DO: split Portfolio into Position / sizers / risk_mgt
+TO DO: create Position abstract class -> (i) futures_position and (ii) shares_position
 
 TO DO: ...

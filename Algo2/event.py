@@ -42,28 +42,16 @@ class TickEvent(Event):
     """
     def __init__(self, ticker, time, bid, ask):
         """
-        Initialises the TickEvent.
-
-        Parameters:
-        ticker - The ticker symbol, e.g. 'GOOG'.
-        time - The timestamp of the tick
-        bid - The best bid price at the time of the tick.
-        ask - The best ask price at the time of the tick.
+        :param ticker - The ticker symbol, e.g. 'GOOG'.
+        :param time - The timestamp of the tick
+        :param bid - The best bid price at the time of the tick.
+        :param ask - The best ask price at the time of the tick.
         """
         self.type = EventType.TICK # i.e. = "TICK" 
         self.ticker = ticker
         self.time = time
         self.bid = bid
         self.ask = ask
-
-    def __str__(self):
-        return "Type: %s, Ticker: %s, Time: %s, Bid: %s, Ask: %s" % (
-            str(self.type), str(self.ticker),
-            str(self.time), str(self.bid), str(self.ask)
-        )
-
-    def __repr__(self):
-        return str(self)
 
 
 class BarEvent(Event):
@@ -78,19 +66,15 @@ class BarEvent(Event):
         close_price, volume, adj_close_price=None
     ):
         """
-        Initialises the BarEvent.
-
-        Parameters:
-        ticker - The ticker symbol, e.g. 'GOOG'.
-        time - The timestamp of the bar
-        period - The time period covered by the bar in seconds
-        open_price - The unadjusted opening price of the bar
-        high_price - The unadjusted high price of the bar
-        low_price - The unadjusted low price of the bar
-        close_price - The unadjusted close price of the bar
-        volume - The volume of trading within the bar
-        adj_close_price - The vendor adjusted closing price
-            (e.g. back-adjustment) of the bar
+        :param ticker - The ticker symbol, e.g. 'GOOG'.
+        :param time - The timestamp of the bar
+        :param period - The time period covered by the bar in seconds
+        :param open_price - The unadjusted opening price of the bar
+        :param high_price - The unadjusted high price of the bar
+        :param low_price - The unadjusted low price of the bar
+        :param close_price - The unadjusted close price of the bar
+        :param volume - The volume of trading within the bar
+        :param adj_close_price - The vendor adjusted closing price         
 
         Note: It is not advised to use 'open', 'close' instead
         of 'open_price', 'close_price' as 'open' is a reserved
@@ -106,57 +90,6 @@ class BarEvent(Event):
         self.close_price = close_price
         self.volume = volume
         self.adj_close_price = adj_close_price
-        self.period_readable = self._readable_period()
-
-    def _readable_period(self):
-        """
-        Creates a human-readable period from the number
-        of seconds specified for 'period'.
-
-        For instance, converts:
-        * 1 -> '1sec'
-        * 5 -> '5secs'
-        * 60 -> '1min'
-        * 300 -> '5min'
-
-        If no period is found in the lookup table, the human
-        readable period is simply passed through from period,
-        in seconds.
-        """
-        lut = {
-            1: "1sec",
-            5: "5sec",
-            10: "10sec",
-            15: "15sec",
-            30: "30sec",
-            60: "1min",
-            300: "5min",
-            600: "10min",
-            900: "15min",
-            1800: "30min",
-            3600: "1hr",
-            86400: "1day",
-            604800: "1wk"
-        }
-        if self.period in lut:
-            return lut[self.period]
-        else:
-            return "%ssec" % str(self.period)
-
-    def __str__(self):
-        format_str = "Type: %s, Ticker: %s, Time: %s, Period: %s, " \
-            "Open: %s, High: %s, Low: %s, Close: %s, " \
-            "Adj Close: %s, Volume: %s" % (
-                str(self.type), str(self.ticker), str(self.time),
-                str(self.period_readable), str(self.open_price),
-                str(self.high_price), str(self.low_price),
-                str(self.close_price), str(self.adj_close_price),
-                str(self.volume)
-            )
-        return format_str
-
-    def __repr__(self):
-        return str(self)
 
 ##########################################
 class SignalEvent(Event):
@@ -183,6 +116,7 @@ class SignalEvent(Event):
         self.datetime = datetime
         self.signal_type = signal_type
         self.strength = strength
+
 ##########################################
 class SuggestedOrderEvent(Event):
     """
@@ -248,8 +182,7 @@ class OrderEvent(Event):
         """
         Outputs the values within the Order.
         """
-        print(
-            "Order: Symbol=%s, Type=%s, Quantity=%s, Direction=%s" % 
+        print("Order: Symbol=%s, Type=%s, Quantity=%s, Direction=%s" % 
             (self.symbol, self.order_type, self.quantity, self.direction)
         )
 
