@@ -10,12 +10,13 @@ import numpy as np
 #import pandas as pd
 #import statsmodels.api as sm
 
-from Algo2.feeds.csv_files import HistoricCSVDataHandler
+from Algo2.feeds.OLD_csv_files import HistoricCSVDataHandler
 from Algo2.strategy import Strategy
 from Algo2.event import SignalEvent
-from Algo2.old_portfolio import Portfolio  # TO BE UPDATED
+from Algo2.OLD_portfolio import Portfolio  # TO BE UPDATED
 from Algo2.broker import SimulatedBroker
-from Algo2.backtesting import Backtest
+from Algo2.OLD_backtesting import Backtest
+
 
 class MovingAverageCrossStrategy(Strategy):
     """

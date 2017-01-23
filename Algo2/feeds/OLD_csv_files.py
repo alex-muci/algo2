@@ -1,4 +1,4 @@
-from Algo2.feed import DataHandler
+from Algo2.OLD_feed import DataHandler
 from Algo2.event import  MarketEvent
 
 import os.path #, os, datetime 
@@ -116,10 +116,11 @@ class HistoricCSVDataHandler(DataHandler):
         else:
             return bars_list[-1][0]
 
-    def get_latest_bar_value(self, symbol, val_type):
+    def get_latest_bar_value(self, symbol, val_type = 'adj_close'):
         """
         Returns one of the Open, High, Low, Close, Volume or OI
         values from the pandas Bar series object.
+        Default value is 'adj_close'
         """
         try:
             bars_list = self.latest_symbol_data[symbol]

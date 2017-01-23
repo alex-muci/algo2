@@ -5,7 +5,7 @@ from __future__ import (absolute_import, division, print_function,
 import datetime, time
 import pprint
 import matplotlib.pyplot as plt
-from inspect import isclass # rather than use isistance(x, type) for new-class, which doesn't work for old-style one 
+# from inspect import isclass # rather than use isistance(x, type) for new-class, which doesn't work for old-style one 
 
 try:
     import Queue as queue
@@ -47,11 +47,17 @@ class Backtest(object):
         self.events = queue.Queue() ###### <<<<  ########
      
         # you can input 1. class instances or 2. just their names (with backtesting generating the instances)
-        self.data_handler = data_handler(self.events, self.csv_dir, self.symbol_list) # data_handler if isclass(data_handler) else                                            
+        self.data_handler = data_handler(self.events, self.csv_dir, self.symbol_list) # data_handler if isclass(data_handler) else     
         self.broker =    broker(self.events)
         self.portfolio = portfolio(self.data_handler, self.events, self.start_date, self.initial_capital) 
         self.strategy =  strategy(self.data_handler, self.events)
- 
+        
+        # self.portfolio_handler = portfolio_handler
+        # self.risk_manager = risk_manager
+        # self.statistics = statistics
+        # self.equity = equity
+        # self.cur_time = None
+        
         self.signals = 0
         self.orders = 0
         self.fills = 0
@@ -64,33 +70,45 @@ class Backtest(object):
         """        
         print("Running backtesting...")
         i = 0
-        while self.data_handler.continue_backtest:
+        
+        
+        while True:
             i += 1
             print(i)
-            self.data_handler.update_bars() # MarketEvent here, see implementation of data_handler
-            # Handle the events
-            try:
-                event = self.events.get(False)
-            except queue.Empty:
-                break
+            # Update the market bars
+            if self.data_handler.continue_backtest == True:
+                self.data_handler.update_bars()  # MarketEvent here, see implementation of data_handler
             else:
-                if event is not None:
-                    if event.type == 'MARKET':
-                        self.strategy.calculate_signals(event)
-                        self.portfolio.update_timeindex(event)
-                    elif event.type == 'SIGNAL': # or == EventType.SIGNAL
-                        self.signals += 1                            
-                        self.portfolio.update_signal(event)
-                    elif event.type == 'ORDER':
-                        self.orders += 1
-                        self.broker.execute_order(event)                        
-                    elif event.type == 'FILL':
-                        self.fills += 1
-                        self.portfolio.update_fill(event)#
-                    else:
-                        raise NotImplemented("Unsupported event.type '%s'" % event.type)
+                break
+            # Handle the events
+            while True:
+                try:
+                    event = self.events.get(False)
+                except queue.Empty:
+                    break
+                else:
+                    if event is not None:
+                        if event.type == 'MARKET':
+                            self.strategy.calculate_signals(event)
+                            self.portfolio.update_timeindex(event)
 
-        time.sleep(self.heartbeat)
+                        elif event.type == 'SIGNAL':
+                            self.signals += 1                            
+                            self.portfolio.update_signal(event)
+
+                        elif event.type == 'ORDER':
+                            self.orders += 1
+                            self.broker.execute_order(event)
+
+                        elif event.type == 'FILL':
+                            self.fills += 1
+                            self.portfolio.update_fill(event)
+                            
+                        else:
+                            raise NotImplemented("Unsupported event.type '%s'" % event.type)
+
+            time.sleep(self.heartbeat)
+
 
     def _output_performance(self):
         """

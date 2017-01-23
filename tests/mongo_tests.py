@@ -1,6 +1,8 @@
 from nose.tools import *
 from Algo2.feeds.mongo import *
 
+
+"""	UN-COMMENT THE WHOLE THING
 def test_download():
 	# logging.basicConfig(filename='%s/futures.log' % os.environ['TEMP'],level=logging.DEBUG, format='%(asctime)-15s: %(message)s')
 	check_mongo()
@@ -20,4 +22,8 @@ def test_download():
 
 def test_basic():
 	print "I RAN!"
-	
+
+"""
+
+def test_no1():
+	print "I run"

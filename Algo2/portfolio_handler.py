@@ -100,11 +100,9 @@ class PortfolioHandler(object):
         quantity = fill_event.quantity
         price = fill_event.price
         commission = fill_event.commission
+        
         # Create or modify the position from the fill info
-        self.portfolio.transact_position(
-            action, ticker, quantity,
-            price, commission
-        )
+        self.portfolio.trade_position(action, ticker, quantity, price, commission)
         
     def update_portfolio_value(self):
         """
