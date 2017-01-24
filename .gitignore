@@ -94,3 +94,6 @@ ENV/
 .project
 .pydevproject
 .settings/
+
+# Pycharm project settings
+.idea
