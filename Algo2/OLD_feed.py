@@ -3,13 +3,8 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-
 from abc import ABCMeta, abstractmethod
-# from Algo2.event import  MarketEvent
 
-# import os.path #, os, datetime 
-# import numpy as np
-# import pandas as pd
 
 class DataHandler(object):
     """

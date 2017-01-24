@@ -5,7 +5,7 @@
 from __future__ import print_function
 
 import datetime
-
+import os
 import numpy as np
 #import pandas as pd
 #import statsmodels.api as sm
@@ -93,7 +93,10 @@ class MovingAverageCrossStrategy(Strategy):
 
 
 if __name__ == "__main__":
-    csv_dir = 'C:/Users/Alessandro/workspace/Algo2/samples'  # CHANGE THIS!
+
+    algo2_dir = os.path.dirname(os.path.dirname(__file__))
+    csv_dir = os.path.join(algo2_dir, 'data')
+
     symbol_list = ['AAPL']
     initial_capital = 100000.0
     heartbeat = 0.0
