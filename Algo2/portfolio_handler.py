@@ -88,7 +88,7 @@ class PortfolioHandler(object):
         """
         This is called by the backtester or live trading architecture
         to take a FillEvent and update the Portfolio object with new
-        or modified Positions.
+        or modified positions.
 
         In a backtesting environment these FillEvents will be simulated
         by a model representing the execution, whereas in live trading

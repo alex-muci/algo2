@@ -1,4 +1,4 @@
-from .position import Position
+from Algo2.positions.stock import Stock
 
 
 
@@ -70,7 +70,7 @@ class Portfolio(object):
             close_price = self.price_handler.get_latest_bar_value(symbol)
             bid, ask = close_price
 
-            position = Position(
+            position = Stock(
                 order_type, symbol, quantity,
                 price, commission, bid, ask
             )

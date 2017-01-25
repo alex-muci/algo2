@@ -1,9 +1,10 @@
-from Algo2.OLD_feed import DataHandler
-from Algo2.event import  MarketEvent
+import os.path #, os, datetime
 
-import os.path #, os, datetime 
 import numpy as np
 import pandas as pd
+
+from OLD_event import MarketEvent
+from OLD_feed import DataHandler
 
 
 class HistoricCSVDataHandler(DataHandler):

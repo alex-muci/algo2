@@ -1,8 +1,17 @@
 from nose.tools import assert_equal
-from Algo2.position import Position
+from Algo2.positions.stock import Stock
+
+# TODO: futures test
+
+def test_calculate_futures_round_trip():
+    """
+    Test a round-trip trade in one futures contract.
+    """
+    pass
 
 
-def test_calculate_round_trip():
+
+def test_calculate_stock_round_trip():
     """
     Test a round-trip trade in Exxon-Mobil 'XOM'.    
     
@@ -11,10 +20,10 @@ def test_calculate_round_trip():
     """
     
     # set position with a buy
-    XOM_position = Position("BOT", "XOM",      # order_type, symbol, 
+    XOM_position = Stock("BOT", "XOM",  # order_type, symbol,
                         100, 74.78, 1.00,  #init_quantity, init_price, init_commission,
-                        74.78, 74.80       # bid, ask  
-                        )
+                        74.78, 74.80  # bid, ask
+                         )
     #  execute a few more trades     #:input: order_type, quantity, price, commission
     XOM_position.trade("BOT", 100, 74.63, 1.0)
     XOM_position.trade("BOT", 250, 74.620, 1.25)    

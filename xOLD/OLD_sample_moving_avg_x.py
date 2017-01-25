@@ -6,16 +6,15 @@ from __future__ import print_function
 
 import datetime
 import os
-import numpy as np
-#import pandas as pd
-#import statsmodels.api as sm
 
-from Algo2.feeds.OLD_csv_files import HistoricCSVDataHandler
-from Algo2.strategy import Strategy
-from Algo2.event import SignalEvent
-from Algo2.OLD_portfolio import Portfolio  # TO BE UPDATED
-from Algo2.broker import SimulatedBroker
-from Algo2.OLD_backtesting import Backtest
+import numpy as np
+
+from OLD_portfolio import Portfolio  # TO BE SPLIT
+from OLD_broker import SimulatedBroker
+from OLD_event import SignalEvent
+from OLD_strategy import Strategy
+from OLD_backtesting import Backtest
+from OLD_feed_csv_files import HistoricCSVDataHandler
 
 
 class MovingAverageCrossStrategy(Strategy):

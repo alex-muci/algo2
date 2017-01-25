@@ -4,30 +4,26 @@
 # TO BE DELETED / TO BE DELETED / TO BE DELETED:
 #    OLD portfolio.py
 # this old version incorporated into a single class:
-#     1. current positions & all holdings book-kepeing (-> positions & -> portfolio) 
-#     2. update on_singnal & on_fill (-> portfolio_handler)
+#     1. current positions & all holdings book-keeping (-> positions & -> portfolio)
+#     2. update on_signal & on_fill (-> portfolio_handler)
 #     3. statistics and plots (-> analyser)
-# new portfolio.py split into: position + portfolio + portfolio_handler + analyser
+# new portfolio.py split into: position (stock, ...) + portfolio + portfolio_handler + analyser
 
 from __future__ import print_function
 
-import datetime
-from math import floor
-from Algo2.analyser import get_drawdowns_2v
+
+import pandas as pd
+
+from OLD_event import OrderEvent
+from OLD_analyser import get_sharpe_ratio, get_drawdowns_2v
 
 try:
     import Queue as queue
 except ImportError:
     import queue
 
-import numpy as np
-import pandas as pd
-
-from event import FillEvent, OrderEvent
-from analyser import get_sharpe_ratio, get_drawdowns
 
 # as per Signal class, also the Portfolio class could be split in two. E.g. Portfolio and Sizer
-
 class Portfolio(object):
     """
     The Portfolio class handles the positions and market

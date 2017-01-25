@@ -4,10 +4,15 @@ import os
 from Algo2.feeds.csv_files import HistoricCSVTickPriceHandler
 from Algo2.utilities import queue
 
+# TODO: complete other function for BAR
+
+def test_HistoricCVSBar():
+    pass
+
 
 def test_HistoricCSVTick():
     """
-    Test Tick_PriceHandler object with  a small list of tickers.
+    Test Tick PriceHandler object with 3 tickers:
     - check initialisation,
     - check subscription,
     - check get_best_bid_ask,
@@ -59,16 +64,16 @@ def test_HistoricCSVTick():
     price_handler.stream_next()
     assert_equal(price_handler.tickers["MSFT"]["timestamp"].strftime("%d-%m-%Y %H:%M:%S.%f" ),
             "01-02-2016 00:00:01.578000" )
-    assert_equal(round(price_handler.tickers["MSFT"]["bid"], 5), 50.14999        )
-    assert_equal(round(price_handler.tickers["MSFT"]["ask"], 5), 50.17001         )
+    assert_equal(round(price_handler.tickers["MSFT"]["bid"], 5), 50.14999)
+    assert_equal(round(price_handler.tickers["MSFT"]["ask"], 5), 50.17001)
 
     # Stream to Tick #10 (GOOG)
     for i in range(4, 11):
         price_handler.stream_next()
     assert_equal(price_handler.tickers["GOOG"]["timestamp"].strftime("%d-%m-%Y %H:%M:%S.%f"),
             "01-02-2016 00:00:05.215000"        )
-    assert_equal(round(price_handler.tickers["GOOG"]["bid"], 5), 683.56001         )
-    assert_equal(round(price_handler.tickers["GOOG"]["ask"], 5), 683.57999         )
+    assert_equal(round(price_handler.tickers["GOOG"]["bid"], 5), 683.56001)
+    assert_equal(round(price_handler.tickers["GOOG"]["ask"], 5), 683.57999)
 
     # Stream to Tick #20 (GOOG)
     for i in range(11, 21):
@@ -76,8 +81,8 @@ def test_HistoricCSVTick():
     # check
     assert_equal(price_handler.tickers["MSFT"]["timestamp"].strftime("%d-%m-%Y %H:%M:%S.%f"),
             "01-02-2016 00:00:09.904000"         )
-    assert_equal(round(price_handler.tickers["MSFT"]["bid"], 5),    50.15000)
-    assert_equal(round(price_handler.tickers["MSFT"]["ask"], 5),    50.17000)
+    assert_equal(round(price_handler.tickers["MSFT"]["bid"], 5), 50.15000)
+    assert_equal(round(price_handler.tickers["MSFT"]["ask"], 5), 50.17000)
 
     #################################
     # Unsubscribe a current ticker
