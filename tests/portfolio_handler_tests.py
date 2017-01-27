@@ -24,10 +24,6 @@ class DataHandlerMock(AbstractTickDataHandler):
 
 class PositionSizerMock(object):
     def size_order(self, portfolio, initial_order):
-        """
-        This PositionSizerMock object simply modifies
-        the quantity to be 100 of any share transacted.
-        """
         initial_order.quantity = 100    # modify the qnty
         return initial_order            # return order
 
@@ -60,7 +56,7 @@ def test_simple_Signal_Order_Fill_cycle_x_PortfolioHandler():
     initial_cash = Decimal("500000.00")
     events_queue = queue.Queue()
     data_handler = DataHandlerMock()
-    position_sizer = PositionSizerMock() # initial_order = 100
+    position_sizer = PositionSizerMock()    # initial_order = 100
     risk_manager = RiskManagerMock()
 
     portfolio_handler = PortfolioHandler(
@@ -73,7 +69,7 @@ def test_simple_Signal_Order_Fill_cycle_x_PortfolioHandler():
     order_from = portfolio_handler._create_order_from_signal(signal_event)
     assert_equal(order_from.ticker, "MSFT")
     assert_equal(order_from.action, "BOT")
-    assert_equal(order_from.quantity, 0)    # <-
+    assert_equal(order_from.quantity, 0)    # <- position.sizer NOT called
 
     # sanity check '_place_orders_onto_queue' method
     order = OrderEvent("MSFT", "BOT", 100)
@@ -90,7 +86,7 @@ def test_simple_Signal_Order_Fill_cycle_x_PortfolioHandler():
     ret_order = portfolio_handler.events_queue.get()
     assert_equal(ret_order.ticker, "MSFT")
     assert_equal(ret_order.action, "BOT")
-    assert_equal(ret_order.quantity, 100)   # <-
+    assert_equal(ret_order.quantity, 100)   # <- position.sizer called
 
     # check "on_fill" method
     fill_event_buy = FillEvent(

@@ -13,7 +13,7 @@ try:
 except ImportError:
     import queue
 
-from OLD_event import FillEvent, OrderEvent
+from OLD_event import FillEvent #, OrderEvent
 
 
 class Broker(object):
