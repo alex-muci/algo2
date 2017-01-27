@@ -5,15 +5,15 @@ import os
 import pandas as pd
 
 
-from Algo2.feed import AbstractBarPriceHandler, AbstractTickPriceHandler
+from Algo2.feed import AbstractBarDataHandler, AbstractTickDataHandler
 from Algo2.event import BarEvent,TickEvent
 
 
 #############################################################
 #############################################################
-class HistoricCSVBarPriceHandler(AbstractBarPriceHandler):
+class HistoricCSVBarDataHandler(AbstractBarDataHandler):
     """
-    YahooDailyBarPriceHandler is designed to read CSV files of
+    HistoricCSVBarDataHandler is designed to read CSV files of
     Yahoo Finance daily Open-High-Low-Close-Volume (OHLCV) data
     for each requested financial instrument and stream those to
     the provided events queue as BarEvents.
@@ -84,7 +84,7 @@ class HistoricCSVBarPriceHandler(AbstractBarPriceHandler):
 
     def subscribe_ticker(self, ticker):
         """
-        Subscribes the price handler to a new ticker symbol.
+        Subscribes the data handler to a new ticker symbol.
         """
         if ticker not in self.tickers:
             try:
@@ -145,7 +145,7 @@ class HistoricCSVBarPriceHandler(AbstractBarPriceHandler):
         # Create the tick event for the queue
         bev = self._create_event(index, period, ticker, row)
         # Store event
-        self._store_event(bev)
+        self._store_event(bev) # method of the underlying class
         # Send event to queue
         self.events_queue.put(bev)
 
@@ -153,9 +153,9 @@ class HistoricCSVBarPriceHandler(AbstractBarPriceHandler):
 #############################################################
 
 
-class HistoricCSVTickPriceHandler(AbstractTickPriceHandler):
+class HistoricCSVTickDataHandler(AbstractTickDataHandler):
     """
-    HistoricCSVPriceHandler is designed to read CSV files of
+    HistoricCSVPrDataHandler is designed to read CSV files of
     tick data for each requested financial instrument and
     stream those to the provided events queue as TickEvents.
     """

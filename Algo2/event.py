@@ -47,11 +47,20 @@ class TickEvent(Event):
         :param bid - The best bid price at the time of the tick.
         :param ask - The best ask price at the time of the tick.
         """
-        self.type = EventType.TICK # i.e. = "TICK" 
+        self.type = EventType.TICK  # i.e. = "TICK"
         self.ticker = ticker
         self.time = time
         self.bid = bid
         self.ask = ask
+
+    def __str__(self):
+        return "Type: %s, Ticker: %s, Time: %s, Bid: %s, Ask: %s" % (
+            str(self.type), str(self.ticker),
+            str(self.time), str(self.bid), str(self.ask)
+        )
+
+    def __repr__(self):
+        return str(self)
 
 
 class BarEvent(Event):
@@ -80,7 +89,7 @@ class BarEvent(Event):
         of 'open_price', 'close_price' as 'open' is a reserved
         word in Python.
         """
-        self.type = EventType.BAR   # i.e. = "BAR" 
+        self.type = EventType.BAR   # i.e. = "BAR"
         self.ticker = ticker
         self.time = time
         self.period = period
@@ -98,24 +107,23 @@ class SignalEvent(Event):
     This is received by a Portfolio object and acted upon.
     Strategy -> SignalEvent -> Portfolio (splittable in sizer and risk mgt)
     """
-    def __init__(self, strategy_id, symbol, datetime, signal_type, strength):
+    def __init__(self,  ticker, action, suggested_quantity=None):
         """
         Initialises the SignalEvent.
 
-        Parameters:
-        strategy_id - unique ID of the strategy generating the signal.
-        symbol - ticker symbol
-        datetime - timestamp at which the signal was generated.
-        signal_type - either 'LONG' or 'SHORT'.
-        strength - adjustment factor "suggestion" used to scale 
-            quantity at the portfolio level. Useful for pairs strategies.
+        :param ticker - ticker symbol
+        :param datetime - timestamp at which the signal was generated.
+        :param action - either 'BOT' (for long) or 'SLD' (for short).
+        :param suggested_quantity - OPTIONAL suggested absolute quantity of units
+            modified by PositionSizer and RiskManager.
         """
-        self.strategy_id = strategy_id
-        self.type = 'SIGNAL'
-        self.symbol = symbol
-        self.datetime = datetime
-        self.signal_type = signal_type
-        self.strength = strength
+        # self.strategy_id = strategy_id # strategy_id - unique ID of the generated strategy signal.
+        # self.datetime = datetime
+
+        self.type = EventType.SIGNAL    # ='SIGNAL'
+        self.ticker = ticker
+        self.action = action
+        self.suggested_quantity = suggested_quantity
 
 ##########################################
 class SuggestedOrderEvent(Event):
@@ -127,7 +135,7 @@ class SuggestedOrderEvent(Event):
     that a suggested order is never transacted unless it has been
     scrutinised by the position sizing and risk management layers.
     """
-    def __init__(self, symbol, order_type, quantity=0):
+    def __init__(self, ticker, action, quantity=0):
         """
         Initialises the SuggestedOrder. The quantity defaults
         to zero as the PortfolioHandler creates these objects
@@ -137,15 +145,13 @@ class SuggestedOrderEvent(Event):
         value prior to sending the SuggestedOrder to the
         RiskManager.
 
-        Parameters:
-        symbol - The ticker symbol, e.g. 'GOOG'.
-        order_type - 'BOT' (for long) or 'SLD' (for short)
-            or 'EXIT' (for liquidation).
-        quantity - The quantity of shares to transact.
+        :param ticker - the ticker symbol, e.g. 'GOOG'.
+        :param action - 'BOT' (for long) or 'SLD' (for short) [or 'EXIT' (for liquidation)].
+        :param quantity - The quantity of contracts to transact.
         """
-        self.symbol = symbol
-        self.order_type = order_type
-        self.quantity = quantity
+        self.ticker = ticker
+        self.action = action
+        self.quantity = quantity    # optional
 
 ##########################################
 class OrderEvent(Event):
@@ -156,7 +162,7 @@ class OrderEvent(Event):
     Portfolio -> OrderEvent -> Execution
     """
 
-    def __init__(self, symbol, order_type, quantity, direction):
+    def __init__(self, ticker, action, quantity, type_of_order=None):
         """
         Initialises 
         1. order type, either Market order ('MKT') or Limit order ('LMT'), 
@@ -167,23 +173,26 @@ class OrderEvent(Event):
         rational orders (i.e. no negative quantities etc).
 
         Parameters:
-        symbol - The instrument to trade.
-        order_type - 'MKT' or 'LMT' for Market or Limit.
-        quantity - Non-negative integer for quantity.
-        direction - 'BUY' or 'SELL' for long or short.
+        :param ticker - The instrument to trade.
+        :param 'BUY' or 'SELL' for long or short.
+        :param quantity - no. of instruments.
+        :param type_of_order - OPTIONAL 'MKT' or 'LMT' for Market or Limit.
         """
-        self.type = 'ORDER'
-        self.symbol = symbol
-        self.order_type = order_type
+
+        self.type = EventType.ORDER
+        self.ticker = ticker
+        self.action = action
         self.quantity = quantity
-        self.direction = direction
+        self.type_of_order = type_of_order    # optional
 
     def print_order(self):
         """
-        Outputs the values within the Order.
+        Outputs the values within the OrderEvent.
         """
-        print("Order: Symbol=%s, Type=%s, Quantity=%s, Direction=%s" % 
-            (self.symbol, self.order_type, self.quantity, self.direction)
+        print(
+            "Order: Ticker=%s, Action=%s, Quantity=%s, TypeOfOrder=%s" % (
+                self.ticker, self.action, self.quantity, self.type_of_order
+            )
         )
 
 ##########################################
@@ -199,53 +208,47 @@ class FillEvent(Event):
     the cost.
     """
 
-    def __init__(self, timeindex, symbol, exchange, quantity, 
-                 direction, fill_cost, commission=None):
+    def __init__(
+        self, timestamp, ticker,
+        action, quantity,
+        exchange, price,
+        commission
+    ):
         """
-        Initialises the FillEvent object. Sets the symbol, exchange,
-        quantity, direction, cost of fill and an optional 
-        commission.
+        Initialises the FillEvent object.
 
-        If commission is not provided, the Fill object will
-        calculate it based on the trade size and Interactive
-        Brokers fees.
-
-        Parameters:
-        timeindex - The bar-resolution when the order was filled (i.e. datetime).
-        symbol - The instrument which was filled.
-        exchange - The exchange where the order was filled.
-        quantity - The filled quantity.
-        direction - The direction of fill ('BUY' or 'SELL')
-        fill_cost - The holdings value in dollars.
-        commission - An optional commission sent from IB.
+        :param timestamp - The timestamp when the order was filled.
+        :param ticker - The ticker symbol, e.g. 'GOOG'.
+        :param action - 'BOT' (for long) or 'SLD' (for short).
+        :param quantity - The filled quantity.
+        :param exchange - The exchange where the order was filled.
+        :param price - The price at which the trade was filled
+        :param commission - The brokerage commission for carrying out the trade.
         """
-        self.type = 'FILL'
-        self.timeindex = timeindex
-        self.symbol = symbol
-        self.exchange = exchange
+
+        self.type = EventType.FILL  # = 'FILL'
+        self.timestamp = timestamp
+        self.ticker = ticker
+        self.action = action
         self.quantity = quantity
-        self.direction = direction
-        self.fill_cost = fill_cost
+        self.exchange = exchange
+        self.price = price
+        self.commission = commission
 
-        # Calculate commission
-        if commission is None:
-            self.commission = self.calculate_ib_commission()
-        else:
-            self.commission = commission
+#        # REMOVED FROM HERE
+#        # Calculate commission
+#        if commission is None:
+#            self.commission = self.calculate_ib_commission()
+#        else:
+#            self.commission = commission
 
-    def calculate_ib_commission(self):
-        """
-        Calculates the fees of trading based on an Interactive
-        Brokers fee structure for API, in USD.
-
-        This does not include exchange or ECN fees.
-
-        Based on "US API Directed Orders":
-        https://www.interactivebrokers.com/en/index.php?f=commission&p=stocks2
-        """
-        full_cost = 1.3
-        if self.quantity <= 500:
-            full_cost = max(1.3, 0.013 * self.quantity)
-        else: # Greater than 500
-            full_cost = max(1.3, 0.008 * self.quantity)
-        return full_cost
+#    def calculate_ib_commission(self):
+        #    Calculates the fees of trading based on an Interactive
+        #    Brokers fee structure for API, in USD.
+        #    This does not include exchange or ECN fees.
+#        full_cost = 1.3
+#        if self.quantity <= 500:
+#            full_cost = max(1.3, 0.013 * self.quantity)
+#        else: # Greater than 500
+#            full_cost = max(1.3, 0.008 * self.quantity)
+#        return full_cost

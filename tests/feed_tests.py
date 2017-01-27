@@ -1,7 +1,7 @@
-from nose.tools import assert_equal, assert_false, assert_raises, assert_true
+from nose.tools import assert_equal, assert_raises, assert_true
 import os
 
-from Algo2.feeds.csv_files import HistoricCSVTickPriceHandler
+from Algo2.feeds.csv_files import HistoricCSVTickDataHandler
 from Algo2.utilities import queue
 
 # TODO: complete other function for BAR
@@ -25,7 +25,7 @@ def test_HistoricCSVTick():
     CSV_path = os.path.join(algo2_dir, 'data')
     events_queue = queue.Queue()
     init_tickers = ["GOOG", "AMZN", "MSFT"]
-    price_handler = HistoricCSVTickPriceHandler(
+    price_handler = HistoricCSVTickDataHandler(
         CSV_path, events_queue, init_tickers
         )
     # __init__ opens three CSV files, merge and sort them
@@ -49,7 +49,7 @@ def test_HistoricCSVTick():
     # Stream to Tick #1 (GOOG)
     price_handler.stream_next()
     assert_equal(price_handler.tickers["GOOG"]["timestamp"].strftime("%d-%m-%Y %H:%M:%S.%f"),
-                "01-02-2016 00:00:01.358000")
+            "01-02-2016 00:00:01.358000")
     assert_equal(round(price_handler.tickers["GOOG"]["bid"], 5), 683.56000 )
     assert_equal(round(price_handler.tickers["GOOG"]["ask"], 5), 683.58000)
 
@@ -71,7 +71,7 @@ def test_HistoricCSVTick():
     for i in range(4, 11):
         price_handler.stream_next()
     assert_equal(price_handler.tickers["GOOG"]["timestamp"].strftime("%d-%m-%Y %H:%M:%S.%f"),
-            "01-02-2016 00:00:05.215000"        )
+            "01-02-2016 00:00:05.215000")
     assert_equal(round(price_handler.tickers["GOOG"]["bid"], 5), 683.56001)
     assert_equal(round(price_handler.tickers["GOOG"]["ask"], 5), 683.57999)
 
@@ -80,7 +80,7 @@ def test_HistoricCSVTick():
         price_handler.stream_next()
     # check
     assert_equal(price_handler.tickers["MSFT"]["timestamp"].strftime("%d-%m-%Y %H:%M:%S.%f"),
-            "01-02-2016 00:00:09.904000"         )
+            "01-02-2016 00:00:09.904000")
     assert_equal(round(price_handler.tickers["MSFT"]["bid"], 5), 50.15000)
     assert_equal(round(price_handler.tickers["MSFT"]["ask"], 5), 50.17000)
 

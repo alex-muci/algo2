@@ -124,6 +124,7 @@ class Portfolio(object):
         dh['commission'] = self.current_holdings['commission']
         dh['total'] = self.current_holdings['cash']
 
+        # update each mkt value position
         for s in self.symbol_list:
             # Approximation to the real value
             market_value = self.current_positions[s] * \

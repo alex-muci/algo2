@@ -5,7 +5,7 @@ from portfolio import Portfolio
 class PortfolioHandler(object):
     def __init__(
         self, initial_cash, events_queue,
-        price_handler, position_sizer, risk_manager
+        data_handler, position_sizer, risk_manager
     ):
         """
         The PortfolioHandler is designed to interact with the
@@ -27,10 +27,10 @@ class PortfolioHandler(object):
         """
         self.initial_cash = initial_cash
         self.events_queue = events_queue
-        self.price_handler = price_handler
+        self.data_handler = data_handler
         self.position_sizer = position_sizer
         self.risk_manager = risk_manager
-        self.portfolio = Portfolio(price_handler, initial_cash)
+        self.portfolio = Portfolio(data_handler, initial_cash)
 
     def _create_order_from_signal(self, signal_event):
         """

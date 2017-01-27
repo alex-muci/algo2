@@ -42,14 +42,14 @@ class Stock(Position):
         Finally, calculate the net total with and without commission.
         """
         if self.order_type == "BOT":
-            self.buys = self.quantity  # initial quantity
-            self.avg_bot = self.price # initial price
+            self.buys = self.quantity   # initial quantity
+            self.avg_bot = self.price   # initial price
             self.total_bot = self.buys * self.avg_bot
             self.avg_price = (self.price * self.quantity + self.commission) / self.quantity
             self.cost = self.quantity * self.avg_price
         else:  # order_type == "SLD"
             self.sells = self.quantity  # initial quantity
-            self.avg_sld = self.price # initial price
+            self.avg_sld = self.price   # initial price
             self.total_sld = self.sells * self.avg_sld
             self.avg_price = (self.price * self.quantity - self.commission) / self.quantity
             self.cost = -self.quantity * self.avg_price
@@ -67,7 +67,7 @@ class Stock(Position):
         midpoint = (bid + ask) / 2  
         self.market_value = self.quantity * midpoint * sign(self.net)
         self.unrealised_pnl = self.market_value - self.cost # (current_price - avg price) * current_qnty
-        self.realised_pnl = self.market_value + self.net_incl_comm   
+        self.realised_pnl = self.market_value + self.net_incl_comm   # NB: incl. of market value
 
     def trade(self, order_type, quantity, price, commission):
         """

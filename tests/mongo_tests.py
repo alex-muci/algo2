@@ -24,6 +24,3 @@ def test_basic():
 	print "I RAN!"
 
 """
-
-def test_no1():
-	print "I run"

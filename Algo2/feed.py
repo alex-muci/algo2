@@ -4,25 +4,22 @@ from __future__ import print_function
 from abc import ABCMeta
 
 
-class AbstractPriceHandler(object):
+class AbstractDataHandler(object):
     """
-    PriceHandler is a base class providing an interface for
+    Data Handler is a base class providing an interface for
     all subsequent (inherited) data handlers (both live and historic).
 
-    The goal of a (derived) PriceHandler object is to output a set of
+    The goal of a (derived) DataHandler object is to output a set of
     TickEvents or BarEvents for each financial instrument and place
     them into an event queue.
 
-    This will replicate how a live strategy would function as current
-    tick/bar data would be streamed via a brokerage. Thus a historic and live
-    system will be treated identically by the rest of the QSTrader suite.
     """
 
     __metaclass__ = ABCMeta
 
     def unsubscribe_ticker(self, ticker):
         """
-        Unsubscribes the price handler from a current ticker symbol.
+        Unsubscribes the data handler from a current ticker symbol.
         """
         try:
             self.tickers.pop(ticker, None)
@@ -48,7 +45,7 @@ class AbstractPriceHandler(object):
             return None
 
 
-class AbstractTickPriceHandler(AbstractPriceHandler):
+class AbstractTickDataHandler(AbstractDataHandler):
     def istick(self):
         return True
 
@@ -80,7 +77,7 @@ class AbstractTickPriceHandler(AbstractPriceHandler):
             return None, None
 
 
-class AbstractBarPriceHandler(AbstractPriceHandler):
+class AbstractBarDataHandler(AbstractDataHandler):
     def istick(self):
         return False
 

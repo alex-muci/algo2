@@ -1,7 +1,7 @@
 from nose.tools import assert_equal
 from Algo2.positions.stock import Stock
 
-# TODO: futures test
+# TODO: futures test below
 
 def test_calculate_futures_round_trip():
     """
