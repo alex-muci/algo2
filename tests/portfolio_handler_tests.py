@@ -73,7 +73,7 @@ def test_simple_Signal_Order_Fill_cycle_x_PortfolioHandler():
     order_from = portfolio_handler._create_order_from_signal(signal_event)
     assert_equal(order_from.ticker, "MSFT")
     assert_equal(order_from.action, "BOT")
-    assert_equal(order_from.quantity, 0) # <-
+    assert_equal(order_from.quantity, 0)    # <-
 
     # sanity check '_place_orders_onto_queue' method
     order = OrderEvent("MSFT", "BOT", 100)
@@ -90,7 +90,7 @@ def test_simple_Signal_Order_Fill_cycle_x_PortfolioHandler():
     ret_order = portfolio_handler.events_queue.get()
     assert_equal(ret_order.ticker, "MSFT")
     assert_equal(ret_order.action, "BOT")
-    assert_equal(ret_order.quantity, 100)  # <-
+    assert_equal(ret_order.quantity, 100)   # <-
 
     # check "on_fill" method
     fill_event_buy = FillEvent(
@@ -100,7 +100,7 @@ def test_simple_Signal_Order_Fill_cycle_x_PortfolioHandler():
     portfolio_handler.on_fill(fill_event_buy)
     # Check the Portfolio values within the PortfolioHandler
     port = portfolio_handler.portfolio
-    assert_equal(port.cur_cash, Decimal("494974.00"))
+    assert_equal(port.cur_cash, Decimal("494974.00"))   # = 500k - (100 * 50.25 + 1)
 
     # TODO: Finish this off and check it works via Interactive Brokers
     fill_event_sell = FillEvent(
@@ -108,6 +108,10 @@ def test_simple_Signal_Order_Fill_cycle_x_PortfolioHandler():
             100, "ARCA", Decimal("50.25"), Decimal("1.00")
     )
     portfolio_handler.on_fill(fill_event_sell)
+    assert_equal(port.cur_cash, Decimal("499998.00"))   # = 500k - 2 of commission
+    assert_equal(port.unrealised_pnl, 0)    # all positions closed
+    assert_equal(port.realised_pnl, -2)     # lost 2 on commission (flat buy and sell)
+
 
 
 
