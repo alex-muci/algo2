@@ -69,24 +69,24 @@ def test_simple_Signal_Order_Fill_cycle_x_PortfolioHandler():
     order_from = portfolio_handler._create_order_from_signal(signal_event)
     assert_equal(order_from.ticker, "MSFT")
     assert_equal(order_from.action, "BOT")
-    assert_equal(order_from.quantity, 0)    # <- position.sizer NOT called
+    assert_equal(order_from.quantity, 0)    # NB: position.sizer NOT called, dafault = 0
 
     # sanity check '_place_orders_onto_queue' method
     order = OrderEvent("MSFT", "BOT", 100)
     order_list = [order]
     portfolio_handler._place_orders_onto_queue(order_list)
-    ret_order = portfolio_handler.events_queue.get()  # <---
-    assert_equal(ret_order.ticker, "MSFT")
-    assert_equal(ret_order.action, "BOT")
-    assert_equal(ret_order.quantity, 100)
+    rtrn1_order = portfolio_handler.events_queue.get()  # <---
+    assert_equal(rtrn1_order.ticker, "MSFT")
+    assert_equal(rtrn1_order.action, "BOT")
+    assert_equal(rtrn1_order.quantity, 100)
 
     # check "on_signal" method
     signal_event = SignalEvent("MSFT", "BOT")
     portfolio_handler.on_signal(signal_event)
-    ret_order = portfolio_handler.events_queue.get()
-    assert_equal(ret_order.ticker, "MSFT")
-    assert_equal(ret_order.action, "BOT")
-    assert_equal(ret_order.quantity, 100)   # <- position.sizer called
+    rtrn2_order = portfolio_handler.events_queue.get()
+    assert_equal(rtrn2_order.ticker, "MSFT")
+    assert_equal(rtrn2_order.action, "BOT")
+    assert_equal(rtrn2_order.quantity, 100)   # <- position.sizer called
 
     # check "on_fill" method
     fill_event_buy = FillEvent(
