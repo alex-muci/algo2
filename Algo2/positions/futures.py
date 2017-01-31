@@ -1,5 +1,4 @@
 from __future__ import division
-from numpy import sign
 
 from Algo2.position import Position
 

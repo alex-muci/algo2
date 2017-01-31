@@ -10,6 +10,7 @@ if PY2:
 else:
     import queue
 
+# for serialisation, cPickle 100x faster
 try:
     import cPickle as pickle
 except ImportError:

@@ -6,7 +6,7 @@ import pandas as pd
 
 
 from Algo2.feed import AbstractBarDataHandler, AbstractTickDataHandler
-from Algo2.event import BarEvent,TickEvent
+from Algo2.event import BarEvent, TickEvent
 
 
 #############################################################
@@ -145,7 +145,7 @@ class HistoricCSVBarDataHandler(AbstractBarDataHandler):
         # Create the tick event for the queue
         bev = self._create_event(index, period, ticker, row)
         # Store event
-        self._store_event(bev) # method of the underlying class
+        self._store_event(bev)  # method of the underlying class
         # Send event to queue
         self.events_queue.put(bev)
 
