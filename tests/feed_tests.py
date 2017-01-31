@@ -2,7 +2,9 @@ from nose.tools import assert_equal, assert_raises, assert_true
 import os
 
 from Algo2.feeds.csv_files import HistoricCSVTickDataHandler
+import Algo2.utilities as utils
 from Algo2.utilities import queue
+
 
 # TODO: complete other function for BAR
 
@@ -12,7 +14,7 @@ def test_HistoricCVSBar():
 
 def test_HistoricCSVTick():
     """
-    Test Tick PriceHandler object with 3 tickers:
+    Test Tick DataHandler object with 3 tickers:
     - check initialisation,
     - check subscription,
     - check get_best_bid_ask,
@@ -21,12 +23,12 @@ def test_HistoricCSVTick():
     """
     #################################
     # set up 3 initial tickers.
-    algo2_dir = os.path.dirname(os.path.dirname(__file__))
-    CSV_path = os.path.join(algo2_dir, 'data')
+    # algo2_dir = os.path.dirname(os.path.dirname(__file__)); csv_path = os.path.join(algo2_dir, 'data')
+    csv_path = utils.DEFAULT.CSV_DATA_DIR
     events_queue = queue.Queue()
     init_tickers = ["GOOG", "AMZN", "MSFT"]
     price_handler = HistoricCSVTickDataHandler(
-        CSV_path, events_queue, init_tickers
+        csv_path, events_queue, init_tickers
         )
     # __init__ opens three CSV files, merge and sort them
     # then be stored in a member "tick_stream".
