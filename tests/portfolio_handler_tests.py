@@ -1,4 +1,4 @@
-from nose.tools import assert_equal, assert_false, assert_raises, assert_true
+from nose.tools import assert_equal
 
 import datetime
 from decimal import Decimal # NB: use of Decimal here vs. none in portfolio_tests
@@ -101,7 +101,7 @@ def test_simple_Signal_Order_Fill_cycle_x_PortfolioHandler():
     # TODO: Finish this off and check it works via Interactive Brokers
     fill_event_sell = FillEvent(
             datetime.datetime.utcnow(), "MSFT", "SLD",
-            100, "ARCA", Decimal("50.25"), Decimal("1.00")
+            100, "MOckMarket", Decimal("50.25"), Decimal("1.00")
     )
     portfolio_handler.on_fill(fill_event_sell)
     assert_equal(port.cur_cash, Decimal("499998.00"))   # = 500k - 2 of commission

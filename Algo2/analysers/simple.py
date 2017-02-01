@@ -3,6 +3,9 @@ from __future__ import (absolute_import, division, print_function,
 import datetime
 import os
 
+# from decimal import Decimal, getcontext
+# getcontext().precision = 15
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -56,7 +59,7 @@ class SimpleStatistics(AbstractAnalyser):
             self.timeseries.append(timestamp)
 
             # Calculate percentage return between current and previous equity value.
-            pct = ((self.equity[-1] - self.equity[-2]) / self.equity[-1]) * 100
+            pct = (self.equity[-1] - self.equity[-2]) / self.equity[-2]  * 100  # NB: in QSTRADER denom is self.equity[-1]
             self.equity_returns.append(round(pct, 4))
             # Calculate Drawdown
             self.hwm.append(max(self.hwm[-1], self.equity[-1]))
@@ -88,9 +91,8 @@ class SimpleStatistics(AbstractAnalyser):
         Calculate the sharpe ratio of our equity_returns.
         Expects benchmark_return to be, for example, 0.01 for 1%
         """
-        # excess_returns = pd.Series(self.equity_returns) - benchmark_return / 252
-        excess_returns = self.equity_returns - benchmark_return / 252
-
+        excess_returns = pd.Series(self.equity_returns) - benchmark_return / 252    #NB: pd.series to avoid type mismatch
+        
         # Return the annualised Sharpe ratio based on the excess daily returns
         return round(self.annualised_sharpe(excess_returns), 4)
 
@@ -115,9 +117,9 @@ class SimpleStatistics(AbstractAnalyser):
         equity_series = pd.Series(self.equity)
         bottom_index = drawdown_series.idxmax()
         try:
-            top_index = equity_series[:bottom_index].idxmax()
+            top_index = equity_series[:bottom_index].idxmax()   # top preceding the worse bottom
             pct = (
-                (equity_series.ix[top_index] - equity_series.ix[bottom_index]) /
+                (equity_series.ix[top_index] - equity_series.ix[bottom_index]) / 
                 equity_series.ix[top_index] * 100
             )
             return round(pct, 4)

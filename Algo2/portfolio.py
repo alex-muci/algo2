@@ -51,9 +51,10 @@ class Portfolio(object):
             pt.update_value(bid, ask)
             self.unrealised_pnl += pt.unrealised_pnl  # += pt.market_value - pt.cost
 
-            pnl_diff = pt.realised_pnl - pt.unrealised_pnl
-            self.equity += (pt.market_value - pt.cost + pnl_diff)  # += pt.market_value + pt.net_incl_comm
-
+            pnl_diff = pt.realised_pnl - pt.unrealised_pnl # NB: temporal mismatch !!!
+            # equity = init_cash + {for each tckr [(curr_price - avg_botOrSld) *net_qnty]} - tot_commiss           
+            self.equity += (pt.market_value - pt.cost + pnl_diff)   
+            
     def _add_position(
             self, order_type, ticker,
             quantity, price, commission

@@ -1,5 +1,4 @@
 from nose.tools import assert_equal
-from Algo2.portfolio import Portfolio
 
 from Algo2.feed import AbstractTickDataHandler
 from Algo2.portfolio import Portfolio
@@ -8,7 +7,7 @@ from Algo2.portfolio import Portfolio
 
 # mock class to use in Portfolio __init__
 class DataHandlerMock(AbstractTickDataHandler):
-    # fnct below is to define 'tickers' for .trade_position
+    # fnct below is to update position values
     def get_best_bid_ask(self, ticker):
         prices = {
             "GOOG": (705.4, 705.46),
@@ -87,3 +86,6 @@ def test_Tick_stock_portfolio():
     assert_equal(portfolio.unrealised_pnl, 0.00)
     assert_equal(portfolio.realised_pnl, -899.50)
 
+#if __name__ == "__main__":
+#    test_Tick_stock_portfolio()
+#
