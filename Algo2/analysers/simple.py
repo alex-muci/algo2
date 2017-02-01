@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 import datetime
 import os
 
@@ -5,9 +7,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+#import Algo2.utilities as utils
 
-from ..analyser import AbstractAnalyser
-from ..utilities import pickle
+from Algo2.analyser import AbstractAnalyser
+from Algo2.utilities import pickle
 
 
 class SimpleStatistics(AbstractAnalyser):
@@ -59,6 +62,7 @@ class SimpleStatistics(AbstractAnalyser):
             self.hwm.append(max(self.hwm[-1], self.equity[-1]))
             self.drawdowns.append(self.hwm[-1] - self.equity[-1])
 
+    @property
     def get_results(self):
         """
         Return a dict with all important results & stats.
@@ -84,12 +88,14 @@ class SimpleStatistics(AbstractAnalyser):
         Calculate the sharpe ratio of our equity_returns.
         Expects benchmark_return to be, for example, 0.01 for 1%
         """
-        excess_returns = pd.Series(self.equity_returns) - benchmark_return / 252
+        # excess_returns = pd.Series(self.equity_returns) - benchmark_return / 252
+        excess_returns = self.equity_returns - benchmark_return / 252
 
         # Return the annualised Sharpe ratio based on the excess daily returns
         return round(self.annualised_sharpe(excess_returns), 4)
 
-    def annualised_sharpe(self, returns, N=252):
+    @staticmethod
+    def annualised_sharpe(returns, nn=252):
         """
         Calculate the annualised Sharpe ratio of a returns stream
         based on a number of trading periods, N. N defaults to 252,
@@ -98,7 +104,7 @@ class SimpleStatistics(AbstractAnalyser):
         The function assumes that the returns are the excess of
         those compared to a benchmark.
         """
-        return np.sqrt(N) * returns.mean() / returns.std()
+        return np.sqrt(nn) * returns.mean() / returns.std()
 
     def calculate_max_drawdown_pct(self):
         """

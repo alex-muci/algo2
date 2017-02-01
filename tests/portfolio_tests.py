@@ -1,4 +1,4 @@
-from nose.tools import assert_equal, assert_almost_equal
+from nose.tools import assert_equal
 from Algo2.portfolio import Portfolio
 
 from Algo2.feed import AbstractTickDataHandler

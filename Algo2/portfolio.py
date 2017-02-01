@@ -1,7 +1,10 @@
 from Algo2.positions.stock import Stock
-from Algo2.positions.futures import Futures
+
+
+# from Algo2.positions.futures import Futures
 
 # TODO: add futures contract
+
 
 class Portfolio(object):
     def __init__(self, data_handler, cash):
@@ -22,7 +25,7 @@ class Portfolio(object):
         self.init_cash = cash
         self.equity = cash
         self.cur_cash = cash
-        
+
         self.positions = {}
         self.closed_positions = []
         self.realised_pnl = 0
@@ -38,22 +41,22 @@ class Portfolio(object):
 
         # for each ticker gets price, update value and then sum to get port values
         for ticker in self.positions:
-           pt = self.positions[ticker]
-           if self.data_handler.istick(): # Tick
-               bid, ask = self.data_handler.get_best_bid_ask(ticker)
-           else:                           # (daily) Bar
-               close_price = self.data_handler.get_last_close(ticker) #  .get_latest_bar_value(ticker)
-               bid, ask = close_price
-            
-           pt.update_value(bid, ask)
-           self.unrealised_pnl += pt.unrealised_pnl  # += pt.market_value - pt.cost
+            pt = self.positions[ticker]
+            if self.data_handler.istick():  # Tick
+                bid, ask = self.data_handler.get_best_bid_ask(ticker)
+            else:  # (daily) Bar
+                close_price = self.data_handler.get_last_close(ticker)  # .get_latest_bar_value(ticker)
+                bid, ask = close_price
 
-           pnl_diff = pt.realised_pnl - pt.unrealised_pnl  # (pt.market_value + pt.net_incl_comm) - (pt.market_value - pt.cost)
-           self.equity += (pt.market_value - pt.cost + pnl_diff) # += pt.market_value + pt.net_incl_comm
+            pt.update_value(bid, ask)
+            self.unrealised_pnl += pt.unrealised_pnl  # += pt.market_value - pt.cost
+
+            pnl_diff = pt.realised_pnl - pt.unrealised_pnl
+            self.equity += (pt.market_value - pt.cost + pnl_diff)  # += pt.market_value + pt.net_incl_comm
 
     def _add_position(
-        self, order_type, ticker,
-        quantity, price, commission
+            self, order_type, ticker,
+            quantity, price, commission
     ):
         """
         Adds a new Stock position to the Portfolio.
@@ -63,7 +66,7 @@ class Portfolio(object):
          - create the Stock object
          - update portfolio values.
         """
-        if ticker not in self.positions:    # redundant, since checked in .trade_position
+        if ticker not in self.positions:  # redundant, since checked in .trade_position
             if self.data_handler.istick():
                 bid, ask = self.data_handler.get_best_bid_ask(ticker)
             else:
@@ -82,8 +85,8 @@ class Portfolio(object):
             )
 
     def _modify_position(
-        self, order_type, ticker,
-        quantity, price, commission
+            self, order_type, ticker,
+            quantity, price, commission
     ):
         """
         Modifies a current Position object to the Portfolio.
@@ -94,17 +97,17 @@ class Portfolio(object):
         Once the Position is modified, the Portfolio values
         are updated.
         """
-        if ticker in self.positions:    # redundant, since checked in .trade_position
+        if ticker in self.positions:  # redundant, since checked in .trade_position
             self.positions[ticker].trade(
                 order_type, quantity, price, commission
             )
             if self.data_handler.istick():
                 bid, ask = self.data_handler.get_best_bid_ask(ticker)
             else:
-                close_price = self.data_handler.get_latest_bar_value(ticker) # get last adj close
+                close_price = self.data_handler.get_latest_bar_value(ticker)  # get last adj close
                 bid, ask = close_price
 
-            self.positions[ticker].update_value(bid, ask) # TODO: move in the 'if' below?
+            self.positions[ticker].update_value(bid, ask)  # TODO: move in the 'if' below?
 
             # position closed
             if self.positions[ticker].quantity == 0:
@@ -120,8 +123,8 @@ class Portfolio(object):
             )
 
     def trade_position(
-        self, order_type, ticker,
-        quantity, price, commission
+            self, order_type, ticker,
+            quantity, price, commission
     ):
         """
         Handles any new position or modification to

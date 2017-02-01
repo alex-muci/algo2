@@ -88,8 +88,7 @@ def create_drawdowns(returns):
 
     # Calculate the drawdown and duration statistics
     perf = pd.DataFrame(index=idx)
-    perf["Drawdown"] = (hwm - returns) / hwm
-    perf["Drawdown"].ix[0] = 0.0
+    perf["Drawdown"] = (hwm - returns) / hwm; perf["Drawdown"].ix[0] = 0.0
     perf["DurationCheck"] = np.where(perf["Drawdown"] == 0, 0, 1)
     duration = max(
         sum(1 for i in g if i == 1)

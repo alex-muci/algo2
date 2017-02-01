@@ -19,7 +19,7 @@ class AbstractAnalyser(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def update(self):
+    def update(self, timestamp, portfolio_handler):
         """
         Update all the statistics according to values of the portfolio
         and open positions.
