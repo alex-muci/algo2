@@ -6,7 +6,7 @@ from __future__ import (absolute_import, division, print_function,
 from abc import ABCMeta, abstractmethod
 
 
-class Strategy(object):
+class AbstractStrategy(object):
     """
     Strategy is an abstract base class providing an interface for
     all subsequent (inherited) strategy handling objects.
@@ -23,14 +23,14 @@ class Strategy(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def calculate_signals(self):
+    def calculate_signals(self, event):
         """
         Provides the mechanisms to calculate the list of signals.
         """
         raise NotImplementedError("Should implement calculate_signals()")
 
 
-class Strategies(Strategy):
+class Strategies(AbstractStrategy):
     """
     Strategies is a collection of strategy
     """

@@ -10,7 +10,7 @@ class AbstractPositionSizer(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def size_order(self, portfolio, initial_order):
+    def size_order(self, portfolio, suggested_order):
         """
         This PositionSizer modifies the quantity
         of the suggested_order from Signal

@@ -3,10 +3,13 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-
 from enum import Enum
+
 EventType = Enum("EventType", "TICK BAR SIGNAL ORDER FILL")
+
+
 ##########################################
+
 class Event(object):
     """
     Event is the base class, provinding an interface
@@ -18,7 +21,9 @@ class Event(object):
     """
     pass
 
+
 ##########################################
+
 class MarketEvent(Event):
     """
     Handles the event of receiving a new market update
@@ -26,13 +31,15 @@ class MarketEvent(Event):
     
     Datafeed ->  MarketEvent -> Strategy
     """
+
     def __init__(self):
         """
         Initialises the MarketEvent.
         """
         self.type = 'MARKET'
 
-# MarketEvent 
+
+# MarketEvent
 # can be expressed in one of the following ways:
 class TickEvent(Event):
     """
@@ -40,6 +47,7 @@ class TickEvent(Event):
     which is defined as a ticker symbol and associated best
     bid and ask from the top of the order book.
     """
+
     def __init__(self, ticker, time, bid, ask):
         """
         :param ticker - The ticker symbol, e.g. 'GOOG'.
@@ -69,10 +77,11 @@ class BarEvent(Event):
     open-high-low-close-volume bar, as would be generated
     via common data providers such as Yahoo Finance.
     """
+
     def __init__(
-        self, ticker, time, period,
-        open_price, high_price, low_price,
-        close_price, volume, adj_close_price=None
+            self, ticker, time, period,
+            open_price, high_price, low_price,
+            close_price, volume, adj_close_price=None
     ):
         """
         :param ticker - The ticker symbol, e.g. 'GOOG'.
@@ -89,7 +98,7 @@ class BarEvent(Event):
         of 'open_price', 'close_price' as 'open' is a reserved
         word in Python.
         """
-        self.type = EventType.BAR   # i.e. = "BAR"
+        self.type = EventType.BAR  # i.e. = "BAR"
         self.ticker = ticker
         self.time = time
         self.period = period
@@ -100,6 +109,7 @@ class BarEvent(Event):
         self.volume = volume
         self.adj_close_price = adj_close_price
 
+
 ##########################################
 class SignalEvent(Event):
     """
@@ -107,12 +117,13 @@ class SignalEvent(Event):
     This is received by a Portfolio object and acted upon.
     Strategy -> SignalEvent -> Portfolio (splittable in sizer and risk mgt)
     """
-    def __init__(self,  ticker, action, suggested_quantity=None):
+
+    def __init__(self, ticker, action, suggested_quantity=None):
         """
         Initialises the SignalEvent.
 
         :param ticker - ticker symbol
-        :param datetime - timestamp at which the signal was generated.
+        deleted: datetime - timestamp at which the signal was generated.
         :param action - either 'BOT' (for long) or 'SLD' (for short).
         :param suggested_quantity - OPTIONAL suggested absolute quantity of units
             modified by PositionSizer and RiskManager.
@@ -120,10 +131,11 @@ class SignalEvent(Event):
         # self.strategy_id = strategy_id # strategy_id - unique ID of the generated strategy signal.
         # self.datetime = datetime
 
-        self.type = EventType.SIGNAL    # ='SIGNAL'
+        self.type = EventType.SIGNAL  # ='SIGNAL'
         self.ticker = ticker
         self.action = action
         self.suggested_quantity = suggested_quantity
+
 
 ##########################################
 class SuggestedOrderEvent(Event):
@@ -135,6 +147,7 @@ class SuggestedOrderEvent(Event):
     that a suggested order is never transacted unless it has been
     scrutinised by the position sizing and risk management layers.
     """
+
     def __init__(self, ticker, action, quantity=0):
         """
         Initialises the SuggestedOrder. The quantity defaults
@@ -151,7 +164,8 @@ class SuggestedOrderEvent(Event):
         """
         self.ticker = ticker
         self.action = action
-        self.quantity = quantity    # optional
+        self.quantity = quantity  # optional
+
 
 ##########################################
 class OrderEvent(Event):
@@ -183,7 +197,7 @@ class OrderEvent(Event):
         self.ticker = ticker
         self.action = action
         self.quantity = quantity
-        self.type_of_order = type_of_order    # optional
+        self.type_of_order = type_of_order  # optional
 
     def print_order(self):
         """
@@ -194,6 +208,7 @@ class OrderEvent(Event):
                 self.ticker, self.action, self.quantity, self.type_of_order
             )
         )
+
 
 ##########################################
 class FillEvent(Event):
@@ -209,10 +224,10 @@ class FillEvent(Event):
     """
 
     def __init__(
-        self, timestamp, ticker,
-        action, quantity,
-        exchange, price,
-        commission
+            self, timestamp, ticker,
+            action, quantity,
+            exchange, price,
+            commission
     ):
         """
         Initialises the FillEvent object.
@@ -235,18 +250,19 @@ class FillEvent(Event):
         self.price = price
         self.commission = commission
 
-#        # REMOVED FROM HERE
-#        # Calculate commission
-#        if commission is None:
-#            self.commission = self.calculate_ib_commission()
-#        else:
-#            self.commission = commission
+    #        # REMOVED FROM HERE
+    #        # Calculate commission
+    #        if commission is None:
+    #            self.commission = self.calculate_ib_commission()
+    #        else:
+    #            self.commission = commission
 
-#    def calculate_ib_commission(self):
-        #    Calculates the fees of trading based on an Interactive
-        #    Brokers fee structure for API, in USD.
-        #    This does not include exchange or ECN fees.
-#        full_cost = 1.3
+    #    def calculate_ib_commission(self):
+    #    Calculates the fees of trading based on an Interactive
+    #    Brokers fee structure for API, in USD.
+    #    This does not include exchange or ECN fees.
+
+# full_cost = 1.3
 #        if self.quantity <= 500:
 #            full_cost = max(1.3, 0.013 * self.quantity)
 #        else: # Greater than 500
