@@ -1,5 +1,4 @@
-from math import floor
-from base_sizer import AbstractPositionSizer
+from Algo2.pos_sizers.base_sizer import AbstractPositionSizer   # using absolute ref
 
 
 class VolTargetStockPositionSizer(AbstractPositionSizer):
@@ -7,4 +6,6 @@ class VolTargetStockPositionSizer(AbstractPositionSizer):
     Carries out a volatility target sizing
     for a Stock the order.
     """
-    pass
+    def size_order(self, portfolio, initial_order):
+
+        pass

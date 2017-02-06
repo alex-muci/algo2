@@ -4,9 +4,9 @@ from nose.tools import assert_equal, assert_almost_equal
 # from decimal import Decimal
 from portfolio_tests import DataHandlerMock
 
-from Algo2 import utilities as utils
+import Algo2.utilities as utilities
 from Algo2.portfolio import Portfolio
-from Algo2.analysers.simple import SimpleStatistics
+from Algo2.statistics.simple import SimpleStatistics
 
 
 class PortfolioHandlerMock(object):
@@ -22,7 +22,7 @@ def test_calculating_statistics():
         Values checked in Excel (were wrong in QSTRADER)
     """
 
-    config = utils.DEFAULT
+    config = utilities.DEFAULT  # for default dir of datafeed and output
 
     # Create Statistics object
     data_handler = DataHandlerMock()
@@ -148,7 +148,7 @@ def test_calculating_statistics():
     #
     # Test that results are calculated correctly.
     #
-    results = statistics.get_results
+    results = statistics.get_results()
     assert_equal(results["max_drawdown"], 960.00)
     assert_almost_equal(results["max_drawdown_pct"], 0.192)  # (top - bottom) / top
     assert_almost_equal(float(results["sharpe"]), 1.7513)

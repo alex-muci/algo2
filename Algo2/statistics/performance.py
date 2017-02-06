@@ -3,6 +3,8 @@ import pandas as pd
 from scipy.stats import linregress
 from itertools import groupby
 
+#   Some useful financial functions
+
 
 def aggregate_returns(returns, convert_to):
     """
@@ -38,7 +40,7 @@ def create_cagr(equity, periods=252):
     periods - Daily (252), Hourly (252*6.5), Minutely(252*6.5*60) etc.
     """
     years = len(equity) / float(periods)
-    return (equity[-1] ** (1.0 / years)) - 1.0
+    return (equity[-1]/equity[0])**(1.0 / years) - 1.0
 
 
 def create_sharpe_ratio(returns, periods=252):

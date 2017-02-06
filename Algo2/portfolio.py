@@ -46,7 +46,7 @@ class Portfolio(object):
                 bid, ask = self.data_handler.get_best_bid_ask(ticker)
             else:  # (daily) Bar
                 close_price = self.data_handler.get_last_close(ticker)  # .get_latest_bar_value(ticker)
-                bid, ask = close_price
+                bid, ask = close_price, close_price
 
             pt.update_value(bid, ask)
             self.unrealised_pnl += pt.unrealised_pnl  # += pt.market_value - pt.cost
@@ -71,8 +71,8 @@ class Portfolio(object):
             if self.data_handler.istick():
                 bid, ask = self.data_handler.get_best_bid_ask(ticker)
             else:
-                close_price = self.data_handler.get_latest_bar_value(ticker)
-                bid, ask = close_price
+                close_price = self.data_handler.get_last_close(ticker)
+                bid, ask = close_price, close_price
 
             self.positions[ticker] = Stock(
                 order_type, ticker, quantity,
@@ -105,8 +105,8 @@ class Portfolio(object):
             if self.data_handler.istick():
                 bid, ask = self.data_handler.get_best_bid_ask(ticker)
             else:
-                close_price = self.data_handler.get_latest_bar_value(ticker)  # get last adj close
-                bid, ask = close_price
+                close_price = self.data_handler.get_last_close(ticker)  # get last adj close
+                bid, ask = close_price, close_price
 
             self.positions[ticker].update_value(bid, ask)  # TODO: move in the 'if' below?
 

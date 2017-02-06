@@ -2,10 +2,10 @@ from __future__ import division
 
 from numpy import sign
 
-from Algo2.position import Position
+from base_position import AbstractPosition
 
 
-class Stock(Position):
+class Stock(AbstractPosition):
     """
     Book-keeping for shares (stocks) qnty/value
     and following trades in same shares.
@@ -14,7 +14,7 @@ class Stock(Position):
         self, order_type, symbol, 
         init_quantity, init_price, init_commission,
         bid, ask   # for future ticks implementation (rather than just daily close)
-        #GBPxxx = 1.0000  # TODO
+        #GBPxxx = 1.0000  # TODO: add FX
     ):
         """
         Initial booking-keeping is set for zero expect for initial sales/buys,

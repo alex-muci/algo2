@@ -1,16 +1,11 @@
-
-
 import os
-
 import pandas as pd
 
-
-from Algo2.feed import AbstractBarDataHandler, AbstractTickDataHandler
 from Algo2.event import BarEvent, TickEvent
+from Algo2.feeds.base_feed import AbstractBarDataHandler, AbstractTickDataHandler
 
 
-#############################################################
-#############################################################
+# TODO: add open/high/low in 'subscribe'
 class HistoricCSVBarDataHandler(AbstractBarDataHandler):
     """
     HistoricCSVBarDataHandler is designed to read CSV files of
@@ -65,6 +60,7 @@ class HistoricCSVBarDataHandler(AbstractBarDataHandler):
         Note that this is an idealised situation, utilised solely for
         backtesting. In live trading ticks may arrive "out of order".
         """
+        # .sort_index(inplace=True) if not copy
         df = pd.concat(self.tickers_data.values()).sort_index()
         start = None
         end = None
@@ -92,12 +88,12 @@ class HistoricCSVBarDataHandler(AbstractBarDataHandler):
                 dft = self.tickers_data[ticker]
                 row0 = dft.iloc[0]
 
-                close = float(row0["Close"])
-                adj_close = float(row0["Adj Close"])
+                # open = float(row0["Open"])
+                # etc..
 
                 ticker_prices = {
-                    "close": close,
-                    "adj_close": adj_close,
+                    "close": float(row0["Close"]),
+                    "adj_close": float(row0["Adj Close"]),
                     "timestamp": dft.index[0]
                 }
                 self.tickers[ticker] = ticker_prices

@@ -9,21 +9,19 @@ EventType = Enum("EventType", "TICK BAR SIGNAL ORDER FILL")
 
 
 ##########################################
-
 class Event(object):
     """
     Event is the base class, provinding an interface
     for all inherited that will be created/stored
     
+    """
     @property
     def typename(self):
         return self.type.name
-    """
-    pass
+
 
 
 ##########################################
-
 class MarketEvent(Event):
     """
     Handles the event of receiving a new market update

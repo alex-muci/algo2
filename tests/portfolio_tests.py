@@ -1,6 +1,6 @@
 from nose.tools import assert_equal
 
-from Algo2.feed import AbstractTickDataHandler
+from Algo2.feeds.base_feed import AbstractTickDataHandler
 from Algo2.portfolio import Portfolio
 
 # TODO: test Bar, but mainly Futures (besides stock positions)

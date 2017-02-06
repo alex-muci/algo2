@@ -1,12 +1,11 @@
-from nose.tools import assert_equal
-
 import datetime
 from decimal import Decimal # NB: use of Decimal here vs. none in portfolio_tests
 
+from nose.tools import assert_equal
 
 from Algo2.event import FillEvent, OrderEvent, SignalEvent
+from Algo2.feeds.base_feed import AbstractTickDataHandler
 from Algo2.portfolio_handler import PortfolioHandler
-from Algo2.feed import AbstractTickDataHandler
 from Algo2.utilities import queue
 
 

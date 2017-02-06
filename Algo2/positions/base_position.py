@@ -13,7 +13,7 @@ from abc import ABCMeta, abstractmethod
 #      e.g. https://www.interactivebrokers.com/en/software/tws/usersguidebook/thetradingwindow/position_and_p___l.htm
 #########################################################
 
-class Position(object):
+class AbstractPosition(object):
     """
     The Position abstract class handles
     each underlying bookeeping

@@ -1,17 +1,17 @@
 from abc import ABCMeta, abstractmethod
-from utilities import pickle
+from Algo2.utilities import pickle
 
 
-class AbstractAnalyser(object):
+class AbstractStatistics(object):
     """
-    Analyser is an abstract class providing an interface for
+    AbstractStatistics is an abstract class providing an interface for
     all inherited statistic classes (live, historic, custom, etc).
 
-    The goal of this object is to keep a record of statistical info
-    about trading strategies byy hooking into the event loop
+    The goal is to keep a record of statistical info
+    about trading strategies by hooking into the mkt event loop
     and updating the object according to portfolio performance.
 
-    Ideally, Analyser should be subclassed according to the strategies
+    Ideally, it should be subclassed according to the strategies
     and timeframes traded by the user. Different trading strategies
     may require different metrics or frequencies-of-metrics to be updated.
     """
@@ -42,7 +42,7 @@ class AbstractAnalyser(object):
         raise NotImplementedError("Should implement plot_results()")
 
     @abstractmethod
-    def save(self, filename):
+    def save(self, filename, csv):
         """
         Save statistics results to filename
         """
@@ -57,4 +57,4 @@ class AbstractAnalyser(object):
 
 # # # # # # # # # #
 def load(filename):
-    return AbstractAnalyser.load(filename)
+    return AbstractStatistics.load(filename)

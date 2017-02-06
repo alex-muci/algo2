@@ -1,10 +1,10 @@
 from __future__ import division
 
-from Algo2.position import Position
+from base_position import AbstractPosition
 
 # TODO: write futures contract
 
-class Futures(Position):
+class Futures(AbstractPosition):
     """
     Book-keeping for futures contract qnty/value
     and following trades in same contracts.

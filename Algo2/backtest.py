@@ -28,8 +28,10 @@ class Backtest(object):
         self.statistics = statistics
         self.equity = equity
 
-        self.events_queue = data_handler.events_queue   # = queue.Queue()
+        self.events_queue = data_handler.events_queue   # i.e. = queue.Queue()
         self.cur_time = None
+
+        self.signals = 0; self.orders = 0; self.fills = 0
 
     def _run_backtest(self):
         """
@@ -44,8 +46,8 @@ class Backtest(object):
             try:
                 event = self.events_queue.get(False)
             except queue.Empty:
-                self.data_handler.stream_next()  # get next bar
-            else:
+                self.data_handler.stream_next()  # get next bar, and restart loop
+            else:                                # if event
                 if event is not None:
                     if event.type == EventType.TICK or event.type == EventType.BAR:
                         self.cur_time = event.time
@@ -53,9 +55,12 @@ class Backtest(object):
                         self.portfolio_handler.update_portfolio_value()
                         self.statistics.update(event.time, self.portfolio_handler)
                     elif event.type == EventType.SIGNAL:
+                        self.signals += 1
                         self.portfolio_handler.on_signal(event)
                     elif event.type == EventType.ORDER:
+                        self.orders += 1
                         self.broker.execute_order(event)
+                        self.fills += 1
                     elif event.type == EventType.FILL:
                         self.portfolio_handler.on_fill(event)
                     else:
@@ -66,12 +71,22 @@ class Backtest(object):
         Simulates the backtest and outputs portfolio performance.
         """
         self._run_backtest()
+
+        # output statistics
         results = self.statistics.get_results()
         print("---------------------------------")
         print("Backtest complete.")
+
+        print("Signals: %s" % self.signals)
+        print("Orders: %s" % self.orders)
+        print("Fills: %s" % self.fills)
+
+        print("CAGR %0.2f%%" % (100.0 * results["CAGR"]))
         print("Sharpe Ratio: %s" % results["sharpe"])
         print("Max Drawdown: %s" % results["max_drawdown"])
-        print("Max Drawdown Pct: %s" % results["max_drawdown_pct"])
+        print("Max Drawdown Pct: %0.2f%%" % results["max_drawdown_pct"])
+
+        # normally (if not a test), output plot
         if not testing:
             self.statistics.plot_results()
         return results

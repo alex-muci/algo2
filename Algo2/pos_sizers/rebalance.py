@@ -1,5 +1,5 @@
 from math import floor
-from base_sizer import AbstractPositionSizer
+from Algo2.pos_sizers.base_sizer import AbstractPositionSizer
 
 
 class RebalancePositionSizer(AbstractPositionSizer):

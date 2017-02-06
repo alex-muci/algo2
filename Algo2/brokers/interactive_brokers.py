@@ -9,13 +9,16 @@ import time
 
 from ib.ext.Contract import Contract
 from ib.ext.Order import Order
-from ib.opt import ibConnection, message
+from ib.opt import ibConnection
 
-from .event import FillEvent, OrderEvent
-from .broker import Broker
+from Algo2.brokers.base_broker import AbstractBroker
+from Algo2.event import FillEvent
 
 
-class IB_Broker(Broker):
+# Beginning with release 9.73 (now Beta), InteractiveBrokers is now
+# officially supporting a new Python API client (Python 3 only).
+# This should make the following code superfluous except for Python 2.
+class InteractiveBrokers(AbstractBroker):
     """
     Handles order execution via the Interactive Brokers
     API, for use against accounts when trading live

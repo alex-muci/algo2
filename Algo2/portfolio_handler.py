@@ -5,7 +5,7 @@ from portfolio import Portfolio
 class PortfolioHandler(object):
     def __init__(
         self, initial_cash, events_queue,
-        data_handler, position_sizer, risk_manager
+        data_handler, position_sizer, position_refiner
     ):
         """
         The PortfolioHandler is designed to interact with the
@@ -29,7 +29,7 @@ class PortfolioHandler(object):
         self.events_queue = events_queue
         self.data_handler = data_handler
         self.position_sizer = position_sizer
-        self.risk_manager = risk_manager
+        self.position_refiner = position_refiner    # risk mgt
         self.portfolio = Portfolio(data_handler, initial_cash)
 
     def _create_order_from_signal(self, signal_event):
@@ -41,7 +41,7 @@ class PortfolioHandler(object):
         RiskManager will either verify, modify or eliminate.
         """
         if signal_event.suggested_quantity is None:
-            quantity = 0
+            quantity = 0    # default
         else:
             quantity = signal_event.suggested_quantity
         order = SuggestedOrderEvent(
@@ -71,14 +71,14 @@ class PortfolioHandler(object):
         Once received from the RiskManager they are converted into
         full OrderEvent objects and sent back to the events queue.
         """
-        # Create the initial order list from a signal event
+        # Create the initial order list from a signal event, default = 0
         initial_order = self._create_order_from_signal(signal_event)
         # Size the quantity of the initial order
         sized_order = self.position_sizer.size_order(
             self.portfolio, initial_order
         )
-        # Refine or eliminate the order via the risk manager overlay
-        order_events = self.risk_manager.refine_orders(
+        # Refine or eliminate the order via pos refiner overlay
+        order_events = self.position_refiner.refine_orders(
             self.portfolio, sized_order
         )
         # Place orders onto events queue

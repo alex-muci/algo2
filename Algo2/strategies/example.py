@@ -1,7 +1,8 @@
-from Algo2.strategy import AbstractStrategy
+from base_strategy import AbstractStrategy
 from Algo2.event import (SignalEvent, EventType)
 
 
+# TODO: works for one ticker only
 class ExampleStrategy(AbstractStrategy):
     """
     Testing strategy that alternates buying and selling
@@ -18,7 +19,7 @@ class ExampleStrategy(AbstractStrategy):
         self.invested = False
 
     def calculate_signals(self, event):
-        ticker = self.tickers[0]
+        ticker = self.tickers[0]    # just for the 1st ticker only
         if event.type == EventType.TICK and event.ticker == ticker:
             if self.ticks % 5 == 0:
                 if not self.invested:

@@ -1,6 +1,6 @@
 import calendar
 
-from Algo2.strategy import AbstractStrategy
+from base_strategy import AbstractStrategy
 from Algo2.event import (SignalEvent, EventType)
 
 
