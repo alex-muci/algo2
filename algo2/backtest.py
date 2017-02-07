@@ -54,7 +54,7 @@ class Backtest(object):
                         self.cur_time = event.time
                         self.strategy.calculate_signals(event)
                         self.portfolio_handler.update_portfolio_value()
-                        self.statistics.update(event.time, self.portfolio_handler)
+                        self.statistics.update(event.time, self.portfolio_handler)  # TODO: move down?
                     elif event.type == EventType.SIGNAL:
                         self.signals += 1
                         self.portfolio_handler.on_signal(event)
