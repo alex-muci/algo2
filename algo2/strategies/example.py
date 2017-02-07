@@ -2,7 +2,6 @@ from base_strategy import AbstractStrategy
 from algo2.event import (SignalEvent, EventType)
 
 
-# TODO: works for one ticker only
 class ExampleStrategy(AbstractStrategy):
     """
     Testing strategy that alternates buying and selling
@@ -15,19 +14,21 @@ class ExampleStrategy(AbstractStrategy):
     def __init__(self, tickers, events_queue):
         self.tickers = tickers
         self.events_queue = events_queue
-        self.ticks = 0
-        self.invested = False
+
+        # Adds default values to the bars/invested dictionaries
+        self.ticks = {ticker: 0 for ticker in self.tickers}     # was: self.ticks = 0
+        self.invested = {ticker: False for ticker in self.tickers}  # was: self.invested = False
 
     def calculate_signals(self, event):
-        ticker = self.tickers[0]    # just for the 1st ticker only
-        if event.type == EventType.TICK and event.ticker == ticker:
-            if self.ticks % 5 == 0:
-                if not self.invested:
-                    signal = SignalEvent(ticker, "BOT")
+        if event.type == EventType.TICK:    # and event.ticker == ticker:
+            tkr = event.ticker  # was: ticker = self.tickers[0]
+            if self.ticks[tkr] % 5 == 0:
+                if not self.invested[tkr]:
+                    signal = SignalEvent(tkr, "BOT")
                     self.events_queue.put(signal)
-                    self.invested = True
+                    self.invested[tkr] = True
                 else:
-                    signal = SignalEvent(ticker, "SLD")
+                    signal = SignalEvent(tkr, "SLD")
                     self.events_queue.put(signal)
-                    self.invested = False
-            self.ticks += 1
+                    self.invested[tkr] = False
+            self.ticks[tkr] += 1

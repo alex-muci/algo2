@@ -17,8 +17,8 @@ class BuyAndHoldStrategy(AbstractStrategy):
         self.invested = {ticker: False for ticker in self.tickers}
 
     def calculate_signals(self, event):
-        tkr = event.ticker
         if event.type in [EventType.BAR, EventType.TICK]:
+            tkr = event.ticker
             if not self.invested[tkr] and self.ticks[tkr] == 0:
                 signal = SignalEvent(tkr, "BOT")
                 self.events_queue.put(signal)
