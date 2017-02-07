@@ -1,9 +1,10 @@
-#from __future__ import print_function
+from __future__ import print_function
 
 from .utilities import queue
 from .event import EventType
 
 
+# noinspection PyPep8
 class Backtest(object):
     """
     Encapsulates the settings and components for
@@ -31,7 +32,7 @@ class Backtest(object):
         self.events_queue = data_handler.events_queue   # i.e. = queue.Queue()
         self.cur_time = None
 
-        self.signals = 0; self.orders = 0; self.fills = 0
+        self.signals = 0; self.orders = 0; self.fills = 0   # no Py8 inspection
 
     def _run_backtest(self):
         """
@@ -85,7 +86,6 @@ class Backtest(object):
         print("Sharpe Ratio: %s" % results["sharpe"])
         print("Max Drawdown: %s" % results["max_drawdown"])
         print("Max Drawdown Pct: %0.2f%%" % results["max_drawdown_pct"])
-
 
         # normally (if not a test), output plot
         if not testing:
