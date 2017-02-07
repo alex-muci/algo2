@@ -7,6 +7,7 @@ but display more stable and realistic live behaviour (same code used for
 both back-testing and live trading more realistic) and less prone by 
 construction to looking-ahead bias. 
 
+
 ### Flow
 The event-loop is as follows:
 - the data handler (feeds) reads (from csv files or databases) and generates 
@@ -23,7 +24,7 @@ and the filled order recorded.
 
 Repeat.
 
-### Components
+### Main Components
 - Feeds: getting data from csv files (or quandl or databases), 
 create a market event and pass it to the queue.
 - Strategies: transforms a market event into a suggested action (i.e. signal),
@@ -38,16 +39,18 @@ trading) by calling relevant objects (position sizer and refiners, and portfolio
 for positions/value updates).
 - Broker(s): executes order by creating a filled order event and passing to 
 the queue.
-
-### TODO list
+- Statistics: gets update equity curve and relative timestamp,
+and calculate statistics (equity_returns, hwm, drawdowns, Sharpe ratio, ...).
+        
+#### TODO list:
 - finish volatility position sizing;
 - create the pension strategy sample;
-- integrate TA-Lib?;
+- integrate TA-Lib? (see backtrader);
 - introduce currency conversion in either position or portfolio;
 - create futures position (currently supporting only stocks);
 - test Carver's systems (moma + carry);
 - create FX position;
 - getting more tests done on samples.
 
-- nice to have: i. getting Sphynx for docs, ii. CI Travis, iii. finish Mongo,
+   Nice to have: i. getting Sphynx for docs, ii. CI Travis, iii. finish Mongo,
 iv. integrate arctic database?
