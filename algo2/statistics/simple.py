@@ -54,10 +54,11 @@ class SimpleStatistics(AbstractStatistics):
         and calculate equity_returns, hwm, drawdowns
         """
         if timestamp != self.timeseries[-1]:
-            # Retrieve equity value of Portfolio
+            # Retrieve equity value of Portfolio, up
             current_equity = portfolio_handler.portfolio.equity
-            self.equity.append(current_equity)
-            self.timeseries.append(timestamp)
+            self.equity.append(current_equity)  # update equity
+            # append timestamp
+            self.timeseries.append(timestamp)   # update time
 
             # Calculate percentage return between current and previous equity value.
             # ## NB: in 'QSTRADER' the denominator is self.equity[-1] ## #
