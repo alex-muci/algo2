@@ -20,6 +20,7 @@ sizing (e.g. volatility-based) and risk management (e.g. capping number
 of lots).
 - Finally the order gets executed by a Broker (either simulated or a live one) 
 and the filled order recorded.
+
 Repeat.
 
 ### Components
