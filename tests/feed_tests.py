@@ -1,9 +1,9 @@
 from nose.tools import assert_equal, assert_raises, assert_true
 # import os
 
-from Algo2.feeds.csv_files import HistoricCSVTickDataHandler
-import Algo2.utilities as utils
-from Algo2.utilities import queue
+from algo2.feeds.csv_files import HistoricCSVTickDataHandler
+import algo2.utilities as utils
+from algo2.utilities import queue
 
 
 # TODO: complete other function for BAR

@@ -3,10 +3,10 @@ from decimal import Decimal # NB: use of Decimal here vs. none in portfolio_test
 
 from nose.tools import assert_equal
 
-from Algo2.event import FillEvent, OrderEvent, SignalEvent
-from Algo2.feeds.base_feed import AbstractTickDataHandler
-from Algo2.portfolio_handler import PortfolioHandler
-from Algo2.utilities import queue
+from algo2.event import FillEvent, OrderEvent, SignalEvent
+from algo2.feeds.base_feed import AbstractTickDataHandler
+from algo2.portfolio_handler import PortfolioHandler
+from algo2.utilities import queue
 
 
 #   create mock objects for data handler, position sizer and risk mgt

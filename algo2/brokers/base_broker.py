@@ -6,7 +6,7 @@ from __future__ import print_function
 from abc import ABCMeta, abstractmethod
 
 
-from Algo2.event import FillEvent, OrderEvent
+from algo2.event import FillEvent, OrderEvent
 
 
 class AbstractBroker(object):

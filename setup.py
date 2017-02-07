@@ -13,7 +13,7 @@ config = {
 	'author_email':	'alex.muci@gmail.com',
 	'version': '0.1',
 	'install_requires': ['nose'],
-	'packages': ['Algo2'],
+	'packages': ['algo2'],
 	'script': [],
 	'name':	'projectname'
 }

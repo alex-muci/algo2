@@ -1,5 +1,5 @@
 from .base_refiner import AbstractPositionRefiner
-from Algo2.event import OrderEvent
+from algo2.event import OrderEvent
 
 
 class NaivePositionRefiner(AbstractPositionRefiner):

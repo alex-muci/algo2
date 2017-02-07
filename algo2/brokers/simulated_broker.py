@@ -1,5 +1,5 @@
-from Algo2.brokers.base_broker import AbstractBroker
-from Algo2.event import FillEvent, EventType
+from algo2.brokers.base_broker import AbstractBroker
+from algo2.event import FillEvent, EventType
 
 
 class IBSimulatedExecutionHandler(AbstractBroker):

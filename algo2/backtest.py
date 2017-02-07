@@ -86,6 +86,7 @@ class Backtest(object):
         print("Max Drawdown: %s" % results["max_drawdown"])
         print("Max Drawdown Pct: %0.2f%%" % results["max_drawdown_pct"])
 
+
         # normally (if not a test), output plot
         if not testing:
             self.statistics.plot_results()

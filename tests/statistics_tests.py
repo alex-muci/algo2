@@ -4,9 +4,9 @@ from nose.tools import assert_equal, assert_almost_equal
 # from decimal import Decimal
 from portfolio_tests import DataHandlerMock
 
-import Algo2.utilities as utilities
-from Algo2.portfolio import Portfolio
-from Algo2.statistics.simple import SimpleStatistics
+import algo2.utilities as utilities
+from algo2.portfolio import Portfolio
+from algo2.statistics.simple import SimpleStatistics
 
 
 class PortfolioHandlerMock(object):

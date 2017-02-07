@@ -13,10 +13,10 @@ fname = os.path.join(directory , name_file)
 api_key = open('C:/Users/Alessandro/quandlapikey.txt','r').read()  # txt file saved in my usual directory
 quandl.ApiConfig.api_key = api_key  # = "YOUR_KEY_HERE"
 
-base_dir = "C:/Users/Alessandro/Downloads/futures" # where to be saved
+base_dir = "C:/Users/Alessandro/Downloads/futures"  # where to be saved
 
 
-years = range(2016,2017) # range(1992,2022)
+years = range(2016, 2017)    # range(1992,2022)
 months = ['F', 'G', 'H', 'J', 'K', 'M','N', 'Q', 'U', 'V', 'W', 'Z']
 
 #instruments = ['CME/CL'] # oil
@@ -34,7 +34,7 @@ for year in years:
                 print("file exists, skipping...")
                 continue
             try:
-                df = quandl.get(file_, returns="pandas") #,authtoken=api_key)
+                df = quandl.get(file_, returns="pandas")    # ,authtoken=api_key)
             except quandl.NotFoundError:
                 print("No dataset")
                 continue

@@ -15,6 +15,7 @@ PY2 = sys.version_info[0] == 2  # PY2 = sys.version_info.major == 2
 ################################################
 # for serialisation, cPickle 100x faster than native
 try:
+    # noinspection PyPep8Naming
     import cPickle as pickle
 except ImportError:
     import pickle
@@ -44,6 +45,7 @@ if PY2:
     except ImportError:
         winreg = None
 
+    # noinspection PyPep8Naming
     import Queue as queue
 
     MAXINT = sys.maxint

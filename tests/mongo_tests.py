@@ -1,5 +1,5 @@
 from nose.tools import *
-from Algo2.feeds.mongo import *
+from algo2.feeds.mongo import *
 
 
 """	UN-COMMENT THE WHOLE THING

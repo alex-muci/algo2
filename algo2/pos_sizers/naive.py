@@ -1,4 +1,4 @@
-from Algo2.pos_sizers.base_sizer import AbstractPositionSizer
+from algo2.pos_sizers.base_sizer import AbstractPositionSizer
 
 
 class NaiveStockPosSizer(AbstractPositionSizer):

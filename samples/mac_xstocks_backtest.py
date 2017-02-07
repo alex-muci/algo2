@@ -1,16 +1,18 @@
-from Algo2 import utilities
-from Algo2.utilities import queue
-from Algo2.feeds.csv_files import HistoricCSVBarDataHandler
-from Algo2.strategies.moving_average_cross_long import MovingAverageCrossStrategy
-from Algo2.pos_sizers.naive import FixedPositionSizer
-from Algo2.pos_refiners.naive import NaivePositionRefiner
-from Algo2.portfolio_handler import PortfolioHandler
-from Algo2.brokers.simulated_broker import IBSimulatedExecutionHandler
-from Algo2.statistics.simple import SimpleStatistics
-from Algo2.backtest import Backtest
+from algo2 import utilities
+from algo2.utilities import queue
+from algo2.feeds.csv_files import HistoricCSVBarDataHandler
+
+from algo2.strategies.moving_average_cross_xstocks import MovingAverageCrossStrategy
+
+from algo2.pos_sizers.naive import FixedPositionSizer
+from algo2.pos_refiners.naive import NaivePositionRefiner
+from algo2.portfolio_handler import PortfolioHandler
+from algo2.brokers.simulated_broker import IBSimulatedExecutionHandler
+from algo2.statistics.simple import SimpleStatistics
+from algo2.backtest import Backtest
 
 
-def run(config, testing, tickers, filename):
+def run(config, testing, tickers, filename, sw=100, lw=400):
 
     # Set up variables needed for backtest
     events_queue = queue.Queue()
@@ -21,7 +23,7 @@ def run(config, testing, tickers, filename):
     data_handler = HistoricCSVBarDataHandler(csv_dir, events_queue, tickers)
 
     # Use the MAC Strategy
-    strategy = MovingAverageCrossStrategy(tickers, events_queue, 50, 200)
+    strategy = MovingAverageCrossStrategy(tickers, events_queue, sw, lw)
 
     # Use an example Position Sizer and Refiner (risk mgt)
     position_sizer = FixedPositionSizer()

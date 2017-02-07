@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from Algo2.utilities import pickle
+from algo2.utilities import pickle
 
 
 class AbstractStatistics(object):

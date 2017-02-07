@@ -1,8 +1,8 @@
 from math import floor
-from Algo2.pos_sizers.base_sizer import AbstractPositionSizer
+from algo2.pos_sizers.base_sizer import AbstractPositionSizer
 
 
-class RebalancePositionSizer(AbstractPositionSizer):
+class LiquidateRebalancePositionSizer(AbstractPositionSizer):
     """
     Carries out a periodic full liquidation and rebalance of
     the Portfolio.
@@ -23,8 +23,7 @@ class RebalancePositionSizer(AbstractPositionSizer):
     def size_order(self, portfolio, initial_order):
         """
         Size the order to reflect the dollar-weighting of the
-        current equity account size based on pre-specified
-        ticker weights.
+        current equity account size based on pre-specified ticker weights.
         """
         ticker = initial_order.ticker
         if initial_order.action == "EXIT":
@@ -42,9 +41,9 @@ class RebalancePositionSizer(AbstractPositionSizer):
             weight = self.ticker_weights[ticker]
             # Determine total portfolio value, work out dollar weight
             # and finally determine integer quantity of shares to purchase
-            price = portfolio.price_handler.tickers[ticker]["adj_close"]
+            close_price = portfolio.data_handler.tickers[ticker]["adj_close"]
             dollar_weight = weight * portfolio.equity
-            weighted_quantity = int(floor(dollar_weight / price))
+            weighted_quantity = int(floor(dollar_weight / close_price))
             # Update quantity
             initial_order.quantity = weighted_quantity
         return initial_order

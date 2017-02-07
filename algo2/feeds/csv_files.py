@@ -1,8 +1,8 @@
 import os
 import pandas as pd
 
-from Algo2.event import BarEvent, TickEvent
-from Algo2.feeds.base_feed import AbstractBarDataHandler, AbstractTickDataHandler
+from algo2.event import BarEvent, TickEvent
+from algo2.feeds.base_feed import AbstractBarDataHandler, AbstractTickDataHandler
 
 
 # TODO: add open/high/low in 'subscribe'
@@ -62,15 +62,18 @@ class HistoricCSVBarDataHandler(AbstractBarDataHandler):
         """
         # .sort_index(inplace=True) if not copy
         df = pd.concat(self.tickers_data.values()).sort_index()
+
         start = None
         end = None
+        # get the indices if 'start_date' or 'end_end' in __init__
         if self.start_date is not None:
             start = df.index.searchsorted(self.start_date)
         if self.end_date is not None:
             end = df.index.searchsorted(self.end_date)
-        # Determine how to slice
+
+        # Determine how to slice data
         if start is None and end is None:
-            return df.iterrows()
+            return df.iterrows()    # default, as per the Tick version below
         elif start is not None and end is None:
             return df.ix[start:].iterrows()
         elif start is None and end is not None:

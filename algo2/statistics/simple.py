@@ -9,9 +9,9 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-from Algo2.statistics.base_statistics import AbstractStatistics
-from Algo2.utilities import pickle
-import Algo2.statistics.performance as perf
+from algo2.statistics.base_statistics import AbstractStatistics
+from algo2.utilities import pickle
+import algo2.statistics.performance as perf
 
 
 class SimpleStatistics(AbstractStatistics):

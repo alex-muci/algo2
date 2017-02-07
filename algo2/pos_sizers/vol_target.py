@@ -1,4 +1,4 @@
-from Algo2.pos_sizers.base_sizer import AbstractPositionSizer   # using absolute ref
+from algo2.pos_sizers.base_sizer import AbstractPositionSizer   # using absolute ref
 
 
 class VolTargetStockPositionSizer(AbstractPositionSizer):

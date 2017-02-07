@@ -11,8 +11,8 @@ from ib.ext.Contract import Contract
 from ib.ext.Order import Order
 from ib.opt import ibConnection
 
-from Algo2.brokers.base_broker import AbstractBroker
-from Algo2.event import FillEvent
+from algo2.brokers.base_broker import AbstractBroker
+from algo2.event import FillEvent
 
 
 # Beginning with release 9.73 (now Beta), InteractiveBrokers is now

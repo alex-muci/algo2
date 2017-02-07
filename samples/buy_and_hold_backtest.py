@@ -1,20 +1,20 @@
 # import click
 
-from Algo2 import utilities
-from Algo2.utilities import queue
-from Algo2.feeds.csv_files import HistoricCSVBarDataHandler
+from algo2 import utilities
+from algo2.utilities import queue
+from algo2.feeds.csv_files import HistoricCSVBarDataHandler
 
-from Algo2.strategies.buy_and_hold import BuyAndHoldStrategy, NEWBuyAndHoldStrategyNEW
-# from Algo2.strategies.display import DisplayStrategy    # for comparison
-# from Algo2.strategies.base_strategy import Strategies   # wrapper of two stategies
+from algo2.strategies.buy_and_hold import BuyAndHoldStrategy
+# from algo2.strategies.display import DisplayStrategy    # for comparison
+# from algo2.strategies.base_strategy import Strategies   # wrapper of two stategies
 
-from Algo2.pos_sizers.naive import FixedPositionSizer       # used in portfolio_handler
-from Algo2.pos_refiners.naive import NaivePositionRefiner   # used in portfolio_handler
-from Algo2.portfolio_handler import PortfolioHandler
+from algo2.pos_sizers.naive import FixedPositionSizer       # used in portfolio_handler
+from algo2.pos_refiners.naive import NaivePositionRefiner   # used in portfolio_handler
+from algo2.portfolio_handler import PortfolioHandler
 
-from Algo2.brokers.simulated_broker import IBSimulatedExecutionHandler
-from Algo2.statistics.simple import SimpleStatistics
-from Algo2.backtest import Backtest
+from algo2.brokers.simulated_broker import IBSimulatedExecutionHandler
+from algo2.statistics.simple import SimpleStatistics
+from algo2.backtest import Backtest
 
 
 # wrapping all up, easier for automatize test

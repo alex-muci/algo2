@@ -1,5 +1,5 @@
 from nose.tools import assert_equal
-from Algo2.positions.stock import Stock
+from algo2.positions.stock import Stock
 
 # TODO: futures test below
 

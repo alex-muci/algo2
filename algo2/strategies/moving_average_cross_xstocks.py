@@ -2,10 +2,13 @@ from collections import deque
 import numpy as np
 
 from base_strategy import AbstractStrategy
-from Algo2.event import (SignalEvent, EventType)
+from algo2.event import (SignalEvent, EventType)
 
 
 # TODO: remove first class (1 ticker only) once second below tested
+# MA cross for STOCKS either:
+#   i. long (if sma > lma) or
+#   ii. flat
 ##########################################################
 class MovingAverageCrossStrategy(AbstractStrategy):
     """

@@ -1,8 +1,8 @@
 import calendar
 
 from base_strategy import AbstractStrategy
-from Algo2.event import (SignalEvent, EventType)
-
+from algo2.event import (SignalEvent, EventType)
+# from algo2.pos_sizers.rebalance import RebalancePositionSizer
 
 class MonthlyLiquidateRebalanceStrategy(AbstractStrategy):
     """
