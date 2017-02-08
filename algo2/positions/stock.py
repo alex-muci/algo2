@@ -14,7 +14,7 @@ class Stock(AbstractPosition):
         self, order_type, symbol, 
         init_quantity, init_price, init_commission,
         bid, ask   # for future ticks implementation (rather than just daily close)
-        #GBPxxx = 1.0000  # TODO: add FX
+        # GBPxxx = 1.0000  # TODO: add FX
     ):
         """
         Initial booking-keeping is set for zero expect for initial sales/buys,
@@ -26,15 +26,17 @@ class Stock(AbstractPosition):
         self.price = init_price
         self.commission = init_commission
 
-        self.total_commission = init_commission # in 'trade'
+        self.total_commission = init_commission     # in 'trade'
         
         self.buys, self.sells = 0, 0           # = qnty (for bot or sld)
         self.avg_bot, self.avg_sld = 0, 0      # = prices (for bot or sld)
         self.total_bot, self.total_sld = 0, 0  # = price * qnty
-        
-        self._calculate_initial_value() # avgs and totals above, avg price (incl. comm) and full cost 
-        
-        self.update_value(bid, ask) # market_value and pnl (un-/realised) 
+        self.avg_price, self.cost = 0, 0
+        self.net, self.net_total, self.net_incl_comm = 0, 0, 0
+        self._calculate_initial_value()  # avgs and totals above, avg price (incl. comm) and full cost
+
+        self.market_value, self.unrealised_pnl, self.realised_pnl = 0, 0, 0
+        self.update_value(bid, ask)  # market_value and pnl (un-/realised)
 
     def _calculate_initial_value(self):
         """
@@ -55,9 +57,9 @@ class Stock(AbstractPosition):
             self.avg_price = (self.price * self.quantity - self.commission) / self.quantity
             self.cost = -self.quantity * self.avg_price
             
-        self.net = self.buys - self.sells                   # net quantity 
-        self.net_total = self.total_sld - self.total_bot    # net dollar amount, without commission
-        self.net_incl_comm = self.net_total - self.commission # net dollar amount, WITH commission
+        self.net = self.buys - self.sells                      # net quantity
+        self.net_total = self.total_sld - self.total_bot       # net dollar amount, without commission
+        self.net_incl_comm = self.net_total - self.commission  # net dollar amount, WITH commission
 
     def update_value(self, bid, ask):
         """
@@ -67,7 +69,7 @@ class Stock(AbstractPosition):
         """
         midpoint = (bid + ask) / 2  
         self.market_value = self.quantity * midpoint * sign(self.net)
-        self.unrealised_pnl = self.market_value - self.cost # (current_price - avg price) * current_qnty
+        self.unrealised_pnl = self.market_value - self.cost  # (current_price - avg price) * current_qnty
         self.realised_pnl = self.market_value + self.net_incl_comm   # NB: incl. of market value
 
     def trade(self, order_type, quantity, price, commission):
@@ -80,7 +82,7 @@ class Stock(AbstractPosition):
         """
         self.total_commission += commission
 
-        # Upadate total bought and sold
+        # Update total bought and sold
         if order_type == "BOT":
             self.avg_bot = (self.avg_bot * self.buys + price * quantity) / (self.buys + quantity)
             if self.order_type != "SLD":
@@ -96,11 +98,11 @@ class Stock(AbstractPosition):
         else:
             raise NotImplemented("Unsupported order_type '%s'" % order_type)
         
-        # Upadate net values
+        # Update net values
         self.net = self.buys - self.sells
         self.net_total = self.total_sld - self.total_bot
         self.net_incl_comm = self.net_total - self.total_commission
 
-        # Upadate qnty and full cost basis
+        # Update qnty and full cost basis
         self.quantity = self.net 
-        self.cost = self.quantity * self.avg_price # TWS: Cost Basis = the current position x average price
+        self.cost = self.quantity * self.avg_price  # TWS: Cost Basis = the current position x average price
