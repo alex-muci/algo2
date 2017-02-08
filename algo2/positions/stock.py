@@ -1,8 +1,11 @@
-from __future__ import division
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 from numpy import sign
 
-from base_position import AbstractPosition
+from algo2.positions.base_position import AbstractPosition
 
 
 class Stock(AbstractPosition):

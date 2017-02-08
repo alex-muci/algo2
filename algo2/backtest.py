@@ -1,7 +1,10 @@
-from __future__ import print_function
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
-from .utilities import queue
-from .event import EventType
+from algo2.utilities import queue
+from algo2.event import EventType
 
 
 # noinspection PyPep8

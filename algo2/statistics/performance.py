@@ -1,9 +1,18 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
 import numpy as np
 import pandas as pd
 from scipy.stats import linregress
 from itertools import groupby
 
+from algo2.utilities import range   # for compatibility
+
+# #################################### #
 #   Some useful financial functions
+# #################################### #
 
 
 def aggregate_returns(returns, convert_to):
@@ -90,6 +99,7 @@ def create_drawdowns(returns):
 
     # Calculate the drawdown and duration statistics
     perf = pd.DataFrame(index=idx)
+    # noinspection PyPep8
     perf["Drawdown"] = (hwm - returns) / hwm; perf["Drawdown"].ix[0] = 0.0
     perf["DurationCheck"] = np.where(perf["Drawdown"] == 0, 0, 1)
     duration = max(
@@ -121,14 +131,14 @@ def get_drawdowns_slow(returns):
     drawdown, duration - Highest peak-to-trough drawdown and duration.
     """
     # set up
-    idx = returns.index;
+    idx = returns.index
     _len = len(idx)  # cdef double[:]
     hwm = np.zeros(_len)  # was: hwm = [0]
     drawdown = np.zeros(_len)  # drawdown = pd.Series(index = idx) # VERY SLOW IN LOOP BELOW
     duration = np.zeros(_len)  # duration = pd.Series(index = idx) # VERY SLOW IN LOOP BELOW
 
     # Loop over the index range
-    for t in xrange(1, _len):
+    for t in range(1, _len):
         hwm[t] = max(hwm[t - 1], returns[t])  # was:  hwm.append(max(hwm[t-1], returns[t]))
         drawdown[t] = (returns[t] - hwm[t])
         duration[t] = (0 if drawdown[t] == 0 else duration[t - 1] + 1)

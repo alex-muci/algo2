@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
@@ -10,9 +12,6 @@ PY2 = sys.version_info[0] == 2  # PY2 = sys.version_info.major == 2
 # PY3 = (sys.version_info[0] >= 3)
 
 ################################################
-
-
-################################################
 # for serialisation, cPickle 100x faster than native
 try:
     # noinspection PyPep8Naming
@@ -20,11 +19,9 @@ try:
 except ImportError:
     import pickle
 
-
 ################################################
 # folders for DATA and OUT(puts),
 # defined in one place only for ease of future potential changes
-
 def get_updir_wfld(folder_string):
     algo2_dir = os.path.dirname(os.path.dirname(__file__))  # parent dir of current one
     return os.path.join(algo2_dir, folder_string)  # ~/folder
@@ -73,26 +70,23 @@ if PY2:
 #    from urllib2 import urlopen
 #    from urllib import quote as urlquote
 
-
+    # noinspection PyCompatibility
     def iterkeys(d):
         return d.iterkeys()
 
-
+    # noinspection PyCompatibility
     def itervalues(d):
         return d.itervalues()
 
-
+    # noinspection PyCompatibility
     def iteritems(d):
         return d.iteritems()
-
 
     def keys(d):
         return d.keys()
 
-
     def values(d):
         return d.values()
-
 
     def items(d):
         return d.items()
@@ -120,44 +114,34 @@ else:
     zip = zip
     long = int
 
-
     def cmp(a, b):
         return (a > b) - (a < b)
-
 
     def bytes(x):
         return x.encode('utf-8')
 
-
     def bstr(x):
         return str(x)
-
 
 #    from io import StringIO
 
 #    from urllib.request import urlopen
 #    from urllib.parse import quote as urlquote
 
-
     def iterkeys(d):
         return iter(d.keys())
-
 
     def itervalues(d):
         return iter(d.values())
 
-
     def iteritems(d):
         return iter(d.items())
-
 
     def keys(d):
         return list(d.keys())
 
-
     def values(d):
         return list(d.values())
-
 
     def items(d):
         return list(d.items())

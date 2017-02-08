@@ -15,11 +15,10 @@ class Event(object):
     for all inherited that will be created/stored
     
     """
-    @property
-    def typename(self):
-        return self.type.name
-
-
+#    @property
+#    def typename(self):
+#        return self.type.name
+    pass
 
 ##########################################
 class MarketEvent(Event):

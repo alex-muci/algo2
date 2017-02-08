@@ -1,5 +1,5 @@
 import datetime
-from decimal import Decimal # NB: use of Decimal here vs. none in portfolio_tests
+from decimal import Decimal  # NB: use of Decimal here vs. none in portfolio_tests
 
 from nose.tools import assert_equal
 
@@ -21,10 +21,12 @@ class DataHandlerMock(AbstractTickDataHandler):
         }
         return prices[ticker]
 
+
 class PositionSizerMock(object):
     def size_order(self, portfolio, initial_order):
         initial_order.quantity = 100    # modify the qnty
         return initial_order            # return order
+
 
 class RiskManagerMock(object):
     def __init__(self):
@@ -45,7 +47,7 @@ class RiskManagerMock(object):
 
 
 #   test whole cycle
-def test_simple_Signal_Order_Fill_cycle_x_PortfolioHandler():
+def test_simple_signal_order_fill_cycle_x_portfoliohandler():
     """
     Tests a simple Signal, Order and Fill cycle for the
     PortfolioHandler.
@@ -106,7 +108,3 @@ def test_simple_Signal_Order_Fill_cycle_x_PortfolioHandler():
     assert_equal(port.cur_cash, Decimal("499998.00"))   # = 500k - 2 of commission
     assert_equal(port.unrealised_pnl, 0)    # all positions closed
     assert_equal(port.realised_pnl, -2)     # lost 2 on commission (flat buy and sell)
-
-
-
-
