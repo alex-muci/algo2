@@ -1,3 +1,8 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
 from algo2 import utilities
 from algo2.utilities import queue
 from algo2.feeds.csv_files import HistoricCSVBarDataHandler

@@ -10,20 +10,22 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import sys
 import os
-from nose.tools import assert_equal, assert_almost_equal
+from nose.tools import assert_almost_equal  # , assert_equal
 
 from algo2 import utilities
 from algo2.statistics.base_statistics import load
+
 import samples.buy_and_hold_backtest
 import samples.mac_xstocks_backtest
-
+import samples.cla_sample
 
 # Explicit access to module level variables:
 # (like 'self' for the current module instead of the current instance)
 this = sys.modules[__name__]                 # 'this' is a pointer to the module object instance it
 this.config = utilities.DEFAULT              # then explicit assignment on it
-this.testing = True                          # " "   " "     " "     " "
 this.out_dir = utilities.DEFAULT.OUTPUT_DIR  # " "   " "     " "     " "
+this.testing = True                          # " "   " "     " "     " "
+
 
 
 ###################################
@@ -74,3 +76,30 @@ def test_mac_backtest():
 
     assert_almost_equal(float(results['sharpe']), 0.6388, places=2)
     assert_almost_equal(float(results['max_drawdown_pct']), 4.4979, places=2)
+
+
+###################################
+def cla_sample():
+    """
+    Test Credit Line Algorithm
+    """
+    tickers_filename = 'CLA_Data.csv'
+    results = samples.cla_sample.run(this.config, this.testing, tickers_filename)
+
+    for (key, expected) in [
+        ("mu", 0.0),
+        ("sigma", 0.0),
+        ###
+        ('sharpe_ratio', 0.6408),
+        ('min_sr_weight', 5.0308),
+        ('max_sr_weight', 30174.0112),
+        ###
+        ('mv', 0.6408),
+        ('min_mv_weight', 5.0308),
+        ('max_mv_weight', 30174.0112),
+
+    ]:
+        # TODO: fill values above and un-comment below
+        # value = float(results[key])
+        # assert_almost_equal(value, expected, places=3)
+        pass

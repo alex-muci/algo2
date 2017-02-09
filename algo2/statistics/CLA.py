@@ -1,21 +1,28 @@
-#!/usr/bin/env python
 # Critical Line Algorithm
 # by MLdP <lopezdeprado@lbl.gov>
-# -*- coding: utf-8 -*-
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
+from __future__ import (absolute_import, division, print_function)
+#                     , unicode_literals)   # needs to be disable for np.array(..., dtype=...) below
 import numpy as np
 
 
 # noinspection PyUnboundLocalVariable,PyUnboundLocalVariable,PyUnresolvedReferences,PyUnresolvedReferences
 class CLA:
+    """
+    Implementation of Critical Line Algorithm
+    to find optimal portfolios (better than generic quadratic programming)
+    external methods:
+    - solve(), and
+    - get_max_sharpe()
+    - get_min_var()
+    - eff_frontier()
+
+    """
     def __init__(self, mean, covar, l_b, u_b):
         # if (mean == np.ones(mean.shape) * mean.mean()).all(): mean[-1, 0] += 1e-5
         self.mean = mean
         self.covar = covar
-        self.lB = l_b
-        self.uB = u_b
+        self.l_b = l_b
+        self.u_b = u_b
         self.w = []  # solutions
         self.l = []  # lambdas
         self.g = []  # gammas
@@ -32,11 +39,11 @@ class CLA:
             # 1) case a): Bound one free weight
             l_in = None
             if len(f) > 1:
-                covar_f, covar_fb, mean_f, w_b = self.get_matrices(f)
+                covar_f, covar_fb, mean_f, w_b = self._get_matrices(f)
                 covar_f_inv = np.linalg.inv(covar_f)
                 j = 0
                 for i in f:
-                    l, bi = self._compute_lambda(covar_f_inv, covar_fb, mean_f, w_b, j, [self.lB[i], self.uB[i]])
+                    l, bi = self._compute_lambda(covar_f_inv, covar_fb, mean_f, w_b, j, [self.l_b[i], self.u_b[i]])
                     if l > l_in:
                         l_in, i_in, bi_in = l, i, bi
                     j += 1
@@ -45,7 +52,7 @@ class CLA:
             if len(f) < self.mean.shape[0]:
                 b = self._get_b(f)
                 for i in b:
-                    covar_f, covar_fb, mean_f, w_b = self.get_matrices(f + [i])
+                    covar_f, covar_fb, mean_f, w_b = self._get_matrices(f + [i])
                     covar_f_inv = np.linalg.inv(covar_f)
                     l, bi = self._compute_lambda(covar_f_inv, covar_fb, mean_f, w_b, mean_f.shape[0] - 1, self.w[-1][i])
                     if (self.l[-1] is None or l < self.l[-1]) and l > l_out:
@@ -53,7 +60,7 @@ class CLA:
             # 3) compute minimum variance solution
             if (l_in is None or l_in < 0) and (l_out is None or l_out < 0):
                 self.l.append(0)
-                covar_f, covar_fb, mean_f, w_b = self.get_matrices(f)
+                covar_f, covar_fb, mean_f, w_b = self._get_matrices(f)
                 covar_f_inv = np.linalg.inv(covar_f)
                 mean_f = np.zeros(mean_f.shape)
             else:  # 4) decide lambda
@@ -64,7 +71,7 @@ class CLA:
                 else:
                     self.l.append(l_out)
                     f.append(i_out)
-                covar_f, covar_fb, mean_f, w_b = self.get_matrices(f)
+                covar_f, covar_fb, mean_f, w_b = self._get_matrices(f)
                 covar_f_inv = np.linalg.inv(covar_f)
             # 5) compute solution vector
             w_f, g = self._compute_w(covar_f_inv, covar_fb, mean_f, w_b)
@@ -82,16 +89,18 @@ class CLA:
     def _init_algo(self):
         # Initialize the algo
         # 1) Form structured array
-        a = np.zeros((self.mean.shape[0]), dtype=[('id', int), ('mu', float)])
+        _dim = self.mean.shape[0]
+        _ndtype = np.dtype([('id', int), ('mu', float)])
+        a = np.zeros(_dim, dtype=_ndtype)
         b = [self.mean[i][0] for i in range(self.mean.shape[0])]  # dump array into list
-        a[:] = zip(range(self.mean.shape[0]), b)  # fill structured array
+        a[:] = zip(range(self.mean.shape[0]), b)
         # 2) Sort structured array
         b = np.sort(a, order='mu')
         # 3) First free weight
-        i, w = b.shape[0], np.copy(self.lB)
+        i, w = b.shape[0], np.copy(self.l_b)
         while sum(w) < 1:
             i -= 1
-            w[b[i][0]] = self.uB[b[i][0]]
+            w[b[i][0]] = self.u_b[b[i][0]]
         w[b[i][0]] += 1 - sum(w)
         return [b[i][0]], w
 
@@ -147,7 +156,7 @@ class CLA:
             l2 = np.dot(ones_f.T, l3)
             return float(((1 - l1 + l2) * c4[i] - c1 * (bi + l3[i])) / c), bi
 
-    def get_matrices(self, f):
+    def _get_matrices(self, f):
         # Slice covar_f,covar_f_b,covarB,mean_f,meanB,wF,w_b
         covar_f = self._reduce_matrix(self.covar, f, f)
         mean_f = self._reduce_matrix(self.mean, f, [0])
@@ -182,7 +191,7 @@ class CLA:
                 break
             w = self.w[i]
             for j in range(w.shape[0]):
-                if w[j] - self.lB[j] < -tol or w[j] - self.uB[j] > tol:
+                if w[j] - self.l_b[j] < -tol or w[j] - self.u_b[j] > tol:
                     del self.w[i]
                     del self.l[i]
                     del self.g[i]
@@ -216,7 +225,8 @@ class CLA:
                 else:
                     j += 1
 
-    def _get_min_var(self):
+    # exposed method
+    def get_min_var(self):
         # Get the minimum variance solution
         var = []
         for w in self.w:
@@ -224,7 +234,8 @@ class CLA:
             var.append(a)
         return min(var) ** .5, self.w[var.index(min(var))]
 
-    def _get_max_sharpe(self):
+    # exposed method
+    def get_max_sharpe(self):
         # Get the max Sharpe ratio portfolio
         # 1) Compute the local max SR portfolio between any two neighbor turning points
         w_sr, sr = [], []
@@ -263,7 +274,7 @@ class CLA:
         f1 = sign * obj(x1, *args)
         f2 = sign * obj(x2, *args)
         # Loop
-        for i in range(num_iter):
+        for _ in range(num_iter):
             if f1 > f2:
                 a = x1
                 x1 = x2
@@ -281,7 +292,8 @@ class CLA:
         else:
             return x2, sign * f2
 
-    def _eff_frontier(self, points):
+    # exposed method
+    def eff_frontier(self, points):
         # Get the efficient frontier
         mu, sigma, weights = [], [], []
         a = np.linspace(0, 1, points / len(self.w))[:-1]  # remove the 1, to avoid duplications

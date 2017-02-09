@@ -1,4 +1,8 @@
-from __future__ import print_function
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
 from nose.tools import assert_equal, assert_almost_equal
 
 # from decimal import Decimal
