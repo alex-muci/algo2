@@ -10,6 +10,7 @@ from algo2.portfolio import Portfolio
 
 # TODO: test Bar, but mainly Futures (besides stock positions)
 
+
 # mock class to use in Portfolio __init__
 class DataHandlerMock(AbstractTickDataHandler):
     # fnct below is to update position values
@@ -20,7 +21,8 @@ class DataHandlerMock(AbstractTickDataHandler):
         }
         return prices[ticker]
 
-def test_Tick_stock_portfolio():
+
+def test_tick_stock_portfolio():
     """
     Test a portfolio consisting of Amazon and Google/Alphabet
     with various orders to create round-trips for both.
@@ -31,7 +33,7 @@ def test_Tick_stock_portfolio():
     """
     #   Set up the Portfolio object
     dh = DataHandlerMock()
-    cash = 500000.00 # 0.5 mln
+    cash = 500000.00    # 0.5 mln
     portfolio = Portfolio(dh, cash)
 
     # 1. Buy 300 of AMZN over two transactions
@@ -91,6 +93,6 @@ def test_Tick_stock_portfolio():
     assert_equal(portfolio.unrealised_pnl, 0.00)
     assert_equal(portfolio.realised_pnl, -899.50)
 
-#if __name__ == "__main__":
-#    test_Tick_stock_portfolio()
-#
+
+# if __name__ == "__main__":
+#     test_tick_stock_portfolio()

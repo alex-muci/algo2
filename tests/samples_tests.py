@@ -27,7 +27,6 @@ this.out_dir = utilities.DEFAULT.OUTPUT_DIR  # " "   " "     " "     " "
 this.testing = True                          # " "   " "     " "     " "
 
 
-
 ###################################
 def test_buy_and_hold_backtest():
     """

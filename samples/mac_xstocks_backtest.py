@@ -19,6 +19,11 @@ from algo2.backtest import Backtest
 
 def run(config, testing, tickers, filename, sw=100, lw=400):
 
+    # ####################################
+    # get the data via quandl for two vol ETFs: VXX (long vol) and XIV (short vol)
+    # and merge
+
+
     # Set up variables needed for backtest
     events_queue = queue.Queue()
     csv_dir = config.CSV_DATA_DIR

@@ -33,10 +33,10 @@ def run(config, testing, tickers_filename):
     # headers = open(path, 'r').readline().split(',')[:-1]
     data = np.genfromtxt(path, delimiter=',', skip_header=1)  # load as numpy array  # ...,  names=True)
 
-    mean = np.array(data[:1]).T  # get 1st line (header skipped), then transpose -> column vector
-    l_b = np.array(data[1:2]).T  # get 2nd line ...
-    u_b = np.array(data[2:3]).T  # get 3rd line ...
-    covar = np.array(data[3:])
+    mean = np.array(data[:1]).T  # get 2nd line (1st line, headers, skipped), then transpose -> mean
+    l_b = np.array(data[1:2]).T  # get 3rd line ... -> lower bounds
+    u_b = np.array(data[2:3]).T  # get 4th line ... -> upper bounds
+    covar = np.array(data[3:])   # get 5th line and successive -> cov matrix
 
     # Call object and solve
     cla = CLA(mean, covar, l_b, u_b)

@@ -6,7 +6,7 @@ from __future__ import (absolute_import, division, print_function,
 from nose.tools import assert_equal, assert_almost_equal
 
 # from decimal import Decimal
-from portfolio_tests import DataHandlerMock
+from tests.portfolio_tests import DataHandlerMock
 
 import algo2.utilities as utilities
 from algo2.portfolio import Portfolio

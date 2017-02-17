@@ -3,7 +3,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import quandl, os#, itertools, sys
+import quandl, os  # , itertools, sys
 
 """
 name_file = 'quandlapikey.txt'  

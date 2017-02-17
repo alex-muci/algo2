@@ -9,7 +9,7 @@ from algo2.event import BarEvent, TickEvent
 from algo2.feeds.base_feed import AbstractBarDataHandler, AbstractTickDataHandler
 
 
-# TODO: add open/high/low in 'subscribe'
+# TODO: add open/high/low in 'subscribe' / added 'dayfirst=True' in first pd.read_csv() below
 class HistoricCSVBarDataHandler(AbstractBarDataHandler):
     """
     HistoricCSVBarDataHandler is designed to read CSV files of
@@ -48,7 +48,7 @@ class HistoricCSVBarDataHandler(AbstractBarDataHandler):
         ticker_path = os.path.join(self.csv_dir, "%s.csv" % ticker)
         self.tickers_data[ticker] = pd.read_csv(
             ticker_path, header=0, parse_dates=True,
-            index_col=0, names=(
+            index_col=0, dayfirst=True, names=(
                 "Date", "Open", "High", "Low",
                 "Close", "Volume", "Adj Close"
             )
@@ -60,7 +60,6 @@ class HistoricCSVBarDataHandler(AbstractBarDataHandler):
         Concatenates all of the separate equities DataFrames
         into a single DataFrame that is time ordered, allowing tick
         data events to be added to the queue in a chronological fashion.
-
         Note that this is an idealised situation, utilised solely for
         backtesting. In live trading ticks may arrive "out of order".
         """
@@ -74,6 +73,11 @@ class HistoricCSVBarDataHandler(AbstractBarDataHandler):
             start = df.index.searchsorted(self.start_date)
         if self.end_date is not None:
             end = df.index.searchsorted(self.end_date)
+
+        # added so that the ticker events are always deterministic,
+        # otherwise unit test values will differ
+        df['colFromIndex'] = df.index
+        df = df.sort_values(by=["colFromIndex", "Ticker"])
 
         # Determine how to slice data
         if start is None and end is None:
@@ -115,7 +119,8 @@ class HistoricCSVBarDataHandler(AbstractBarDataHandler):
                 "as is already subscribed." % ticker
             )
 
-    def _create_event(self, index, period, ticker, row):
+    @staticmethod
+    def _create_event(index, period, ticker, row):
         """
         Obtain all elements of the bar from a row of dataframe
         and return a BarEvent
@@ -229,7 +234,8 @@ class HistoricCSVTickDataHandler(AbstractTickDataHandler):
                 "as is already subscribed." % ticker
             )
 
-    def _create_event(self, index, ticker, row):
+    @staticmethod
+    def _create_event(index, ticker, row):
         """
         Obtain all elements of the bar a row of dataframe
         and return a TickEvent
