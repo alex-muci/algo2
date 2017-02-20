@@ -21,3 +21,4 @@ class AbstractPositionSizer(object):
         of the suggested_order from Signal
         """
         raise NotImplementedError("Should implement size_order()")
+

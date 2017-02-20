@@ -154,11 +154,13 @@ class SimpleStatistics(AbstractStatistics):
         # Plot the figure
         plt.show()
 
+    # NB: there's extra-first day... that's the reason for [1:]
+    # TODO: check reason for extra-day
     def _get_equity_df(self):
         df = pd.DataFrame()
-        df["equity"] = pd.Series(self.equity, index=self.timeseries)
-        df["equity_returns"] = pd.Series(self.equity_returns, index=self.timeseries)
-        df["drawdowns"] = pd.Series(self.drawdowns, index=self.timeseries)
+        df["equity"] = pd.Series(self.equity[1:], index=self.timeseries[1:])
+        df["equity_returns"] = pd.Series(self.equity_returns[1:], index=self.timeseries[1:])
+        df["drawdowns"] = pd.Series(self.drawdowns[1:], index=self.timeseries[1:])
         return df
 
     def _get_filename(self, filename=""):
