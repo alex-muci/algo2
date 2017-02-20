@@ -17,10 +17,11 @@ class HistoricCSVBarDataHandler(AbstractBarDataHandler):
     for each requested financial instrument and stream those to
     the provided events queue as BarEvents.
     """
+
     def __init__(
-        self, csv_dir, events_queue,
-        init_tickers=None,
-        start_date=None, end_date=None
+            self, csv_dir, events_queue,
+            init_tickers=None,
+            start_date=None, end_date=None,
     ):
         """
         Takes the CSV directory, the events queue and a possible
@@ -46,12 +47,11 @@ class HistoricCSVBarDataHandler(AbstractBarDataHandler):
         them into a pandas DataFrame, stored in a dictionary.
         """
         ticker_path = os.path.join(self.csv_dir, "%s.csv" % ticker)
+
         self.tickers_data[ticker] = pd.read_csv(
             ticker_path, header=0, parse_dates=True,
-            index_col=0, dayfirst=True, names=(
-                "Date", "Open", "High", "Low",
-                "Close", "Volume", "Adj Close"
-            )
+            index_col=0, dayfirst=True,
+            # names=("Date", "Open", "High", "Low", "Close", "Volume", "Adj Close")
         )
         self.tickers_data[ticker]["Ticker"] = ticker
 
@@ -81,7 +81,7 @@ class HistoricCSVBarDataHandler(AbstractBarDataHandler):
 
         # Determine how to slice data
         if start is None and end is None:
-            return df.iterrows()    # default, as per the Tick version below
+            return df.iterrows()  # default, as per the Tick version below
         elif start is not None and end is None:
             return df.ix[start:].iterrows()
         elif start is None and end is not None:
@@ -157,6 +157,7 @@ class HistoricCSVBarDataHandler(AbstractBarDataHandler):
         # Send event to queue
         self.events_queue.put(bev)
 
+
 #############################################################
 #############################################################
 
@@ -167,6 +168,7 @@ class HistoricCSVTickDataHandler(AbstractTickDataHandler):
     tick data for each requested financial instrument and
     stream those to the provided events queue as TickEvents.
     """
+
     def __init__(self, csv_dir, events_queue, init_tickers=None):
         """
         Takes the CSV directory, the events queue and a possible
