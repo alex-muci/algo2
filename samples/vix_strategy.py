@@ -3,19 +3,19 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import os
-import numpy as np
 import pandas as pd
-import quandl
 import datetime as dt
 import pandas_datareader.data as web  # then use df = web.DataReader(stocks, 'yahoo',start,end)
 
-from algo2 import utilities
+from algo2.utilities import range
+
+from algo2 import utilities, statistics
 from algo2.utilities import queue
 from algo2.feeds.csv_files import HistoricCSVBarDataHandler
 
-from algo2.strategies.moving_average_cross_xstocks import MovingAverageCrossStrategy
+from algo2.strategies.buy_and_hold import BuyAndHoldStrategy
 
-from algo2.pos_sizers.naive import FixedPositionSizer
+from algo2.pos_sizers.naive import AllInStockPositionSizer  # All in
 from algo2.pos_refiners.naive import NaivePositionRefiner
 from algo2.portfolio_handler import PortfolioHandler
 from algo2.brokers.simulated_broker import IBSimulatedExecutionHandler
@@ -23,7 +23,7 @@ from algo2.statistics.simple import SimpleStatistics
 from algo2.backtest import Backtest
 
 
-def get_merged_data(config, ticker):
+def get_merged_data(config, ticker, all_in_fee, testing):
     """
     Read:
      - historical data from .csv (i.e. theoretical values for a security), and
@@ -32,115 +32,89 @@ def get_merged_data(config, ticker):
     to form a continuous daily Adj Close for backtesting purposes.
     :param config:  (e.g. utilities.DEFAULT) for default directories
     :param ticker: single ticker
+    :param all_in_fee: estimated annual fee to be sutracted from theoretical values
+    :param testing
     :return: dataframe of combined data (theoretical and new)
     """
-    csv_dir = config.CSV_DATA_DIR
     df_new, df_old = {}, {}
-
-    # 1. download new data
+    # 1. download new data # and drop unwanted columns (keep only 'Adj Close')
     try:
         _start, _end = dt.datetime(1900, 1, 1), dt.date.today()
         df_new = web.DataReader(ticker.upper(), 'yahoo', _start, _end)
+        # df_new.drop(['Open', 'High', 'Low', 'Close', 'Volume'], axis=1, inplace=True)
     except IOError:
         print("No dataset, failing to download data from Yahoo")
 
     # 2. read old data (theo values), re-base it and merge with new
-    f_in = os.path.join(csv_dir, "%s.csv" % ticker)
+    f_in = os.path.join(config.CSV_DATA_DIR, "%s.csv" % ticker)
     df_old = pd.read_csv(f_in, header=0, parse_dates=True,
                          index_col=0, dayfirst=True, names=("Date", "Adj Close")
                          )  # note: dayFirst=True for format issues (European vs. American)
 
-    # get date where to merge and find the multiplier
     # NB: assuming overlapping, i.e.  new_startdate > old_startdate
     old_lastdate = df_old.index.max()
     new_startdate = df_new.index.min()
     if new_startdate > old_lastdate:
         raise IOError("start_date of the new data later than old data last_date")
-    else:
-        mult = df_new[new_startdate]["Adj Close"] \
-                / df_old[new_startdate]["Adj Close"]  # for rebasing
 
+    # get theoretical data net of fees, if any:
+    if all_in_fee != 0.0:
+        perc = df_old["Adj Close"] / df_old["Adj Close"].shift(1) - 1 - all_in_fee / 365.0
+        df_old['Adj Close net'] = df_old['Adj Close']
+        start_pos_ = df_old.index.searchsorted(new_startdate)
+        for i in range(start_pos_):
+            df_old['Adj Close net'].iloc[i + 1] = df_old['Adj Close net'].iloc[i] \
+                                                  * (1 + perc.iloc[i + 1])
+        df_old['Adj Close'] = df_old['Adj Close net']  # rename & drop
+        df_old.drop("Adj Close net", axis=1, inplace=True)
+
+    # rebase
+    mult = df_new.loc[new_startdate, "Adj Close"] \
+        / df_old.loc[new_startdate, "Adj Close"]  # for rebasing
     df_old["Adj Close"] = df_old["Adj Close"] * mult
 
-    # fill old prices (containing only Adj Close) with other cols (Open, High, ...)
-    for col_name in ["Open", "High", "Low", "Close"]:
-        df_old[col_name] = df_old["Adj Close"]
-    df_old["Volume"] = np.nan
-    # df_old.drop(colname, axis=1, inplace=True)
+    # for consistency with rest of the file
+    columns = ["Open", "High", "Low", "Close"]
+    for cols in columns:
+        df_old[cols] = df_old["Adj Close"]
+    df_old["Volume"] = df_new["Volume"].loc[new_startdate]
 
-    # save merged data and return df
-    df_combo = pd.concat([df_old.loc[:new_startdate], df_new])
-    fout = config.OUTPUT_DIR + "/combo_%s.csv" % ticker  # tkr.replace("/", "-")
-    df_combo.to_csv(fout)
-    return df_combo
-
-"""
-def run(config, testing, tickers, filename, sw=100, lw=400):
-    csv_dir = config.CSV_DATA_DIR
-    # ##############################################
-    #   GETTING DATA if not testing
+    # return merged data and, if requested, save it
+    start_pos = df_old.index.searchsorted(new_startdate)
+    df_combo = pd.concat([df_old.iloc[:start_pos], df_new])
     if not testing:
-        # quandl: CHANGE TO YOUR DIRECTORY
-        api_key = open('C:/Users/Alessandro/quandlapikey.txt', 'r').read()
-        quandl.ApiConfig.api_key = api_key  # = "YOUR_KEY_HERE"
+        fout = config.OUTPUT_DIR + "/%s.csv" % ticker
+        df_combo.to_csv(fout)
 
-        df_new, df_old = {}, {}
-        for tkr in tickers:
-            # 1. download new data
-            try:
-                full_tkr = "YAHOO/%s" % tkr.upper()
-                df_new[tkr] = quandl.get(full_tkr, returns="pandas", authtoken=api_key)  # get the data
-                df_new[tkr].rename(columns={'Adjusted Close': 'Adj Close'}, inplace=True)  # rename 1 column
-            except quandl.NotFoundError:
-                print("No dataset")
-            # 2. read old data (theo values), re-base it and merge with new
-            f_in = os.path.join(csv_dir, "%s.csv" % tkr)
-            df_old[tkr] = pd.read_csv(f_in, header=0, parse_dates=True,
-                                      index_col=0, dayfirst=True, names=("Date", "Adj Close")
-                                      )  # note: dayFirst=True for format issues (European vs. American)
+        # return df_combo  # ["Adj Close"]
 
-            fout = config.OUTPUT_DIR + "/combo_%s.csv" % tkr  # tkr.replace("/", "-")
-            df_old[tkr].to_csv(fout)
 
-            old_startdate = df_old[tkr].index.min()
-            old_lastdate = df_old[tkr].index.max()
-            new_startdate = df_new[tkr].index.min()  # Hp: overlapping, i.e.  new_startdate > old_startdate
-
-            if new_startdate > old_lastdate:
-                raise IOError("start_date of the new data later than old data last_date")
-            else:
-                mult = df_new[tkr][new_startdate]["Adj Close"] \
-                      / df_old[tkr][new_startdate]["Adj Close"] # for rebasing
-
-                columns = ["Open", "High", "Low", "Close"]
-                for col_name in columns:
-                    df_old[tkr][col_name] = df_old["Adj Close"]
-                df_old["Volume"] = np.nan
-
-                # df_old.drop('temp_values', axis=1, inplace=True)  # axis = 1 for cols, inplace for change to stay inplace
-
-            # save merged data
-            df_combo = pd.concat([df_old[:-100], df_new])
-            fout = config.OUTPUT_DIR + "/combo_%s.csv" % tkr  # tkr.replace("/", "-")
-            df_combo.to_csv(fout)
-
-"""
-"""
+def run(config, testing, tickers, filename, all_in_fee):
+    # ##############################################
+    #   GETTING (new, besides old saved) DATA, if not testing
+    if not testing:
+        for ticker in tickers:
+            get_merged_data(config, ticker, all_in_fee, testing)
+        csv_dir = config.OUTPUT_DIR
+    else:
+        csv_dir = config.CSV_DATA_DIR
 
     # ##############################################
     #   USUAL SET-UP
+    # Set up variables for backtest()
     events_queue = queue.Queue()
     # csv_dir = config.CSV_DATA_DIR
     initial_equity = 500000.00
 
-    # Use historic data Handler
+    # Use historic (Yahoo Daily) data handler
     data_handler = HistoricCSVBarDataHandler(csv_dir, events_queue, tickers)
 
-    # Use the MAC Strategy
-    strategy = MovingAverageCrossStrategy(tickers, events_queue, sw, lw)
+    # Use the Buy-and-Hold Strategy
+    strategy = BuyAndHoldStrategy(tickers, events_queue)
+    # strategy = Strategies(strategy, DisplayStrategy())    # UN-COMMENT
 
     # Use an example Position Sizer and Refiner (risk mgt)
-    position_sizer = FixedPositionSizer()
+    position_sizer = AllInStockPositionSizer()  # i.e. All-in
     position_refiner = NaivePositionRefiner()
 
     # Use the default Portfolio Handler
@@ -150,22 +124,21 @@ def run(config, testing, tickers, filename, sw=100, lw=400):
     )
 
     # Use a simulated IB Execution Handler
-    execution_handler = IBSimulatedExecutionHandler(events_queue, data_handler)
+    broker_handler = IBSimulatedExecutionHandler(events_queue, data_handler)  # , compliance)
 
     # Use the default Statistics
-    statistics = SimpleStatistics(config, portfolio_handler)
+    stats = SimpleStatistics(config, portfolio_handler)
 
     # Set up the backtest
     backtest = Backtest(
         data_handler, strategy,
-        portfolio_handler, execution_handler,
+        portfolio_handler, broker_handler,
         position_sizer, position_refiner,
-        statistics, initial_equity
+        stats, initial_equity
     )
     results = backtest.simulate_trading(testing=testing)
     statistics.save(filename, False)  # if True: also saves a .csv file with main curves
     return results
-"""
 
 
 ##############################################
@@ -174,8 +147,7 @@ def main():
     testing = False
     tickers = ['XIV']  # ['XIV', 'VXX']  # ; tickers = tickers.split(",")
     filename = ""
-    get_merged_data(config, tickers)
-    # run(config, testing, tickers, filename)
+    run(config, testing, tickers, filename, 0.0)  # 0.024)
 
 
 ##############################################
