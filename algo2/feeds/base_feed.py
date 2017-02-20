@@ -95,16 +95,17 @@ class AbstractBarDataHandler(AbstractDataHandler):
         self.tickers[ticker]["adj_close"] = event.adj_close_price
         self.tickers[ticker]["timestamp"] = event.time
 
-    def get_last_close(self, ticker):
+    # in QSTRADE: it was un-adjusted
+    def get_last_adjclose(self, ticker):
         """
-        Returns the most recent actual (unadjusted) closing price.
+        Returns the most recent actual adjusted closing price.
         """
         if ticker in self.tickers:
-            close_price = self.tickers[ticker]["close"]
+            close_price = self.tickers[ticker]["adj_close"]
             return close_price
         else:
             print(
-                "Close price for ticker %s is not "
+                "Adjusted Close price for ticker %s is not "
                 "available from the YahooDailyBarPriceHandler."
             )
             return None

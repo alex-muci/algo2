@@ -61,7 +61,7 @@ class IBSimulatedExecutionHandler(AbstractBroker):
                 else:
                     fill_price = bid
             else:
-                close_price = self.data_handler.get_last_close(ticker)
+                close_price = self.data_handler.get_last_adjclose(ticker)
                 fill_price = close_price
 
             # Set a dummy exchange and calculate trade commission
