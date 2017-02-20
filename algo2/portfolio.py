@@ -33,9 +33,9 @@ class Portfolio(object):
 
         self.positions = {}
         self.closed_positions = []
-        self.realised_pnl = 0
+        self.realised_pnl, self.unrealised_pnl = 0, 0
 
-    def _update_portfolio(self):
+    def update_portfolio(self):
         """
         Updates value of all positions that are currently open.
         Value of closed positions is booked into (self.)realised_pnl.
@@ -50,7 +50,7 @@ class Portfolio(object):
             if self.data_handler.istick():  # Tick
                 bid, ask = self.data_handler.get_best_bid_ask(ticker)
             else:  # (daily) Bar
-                close_price = self.data_handler.get_last_close(ticker)  # .get_latest_bar_value(ticker)
+                close_price = self.data_handler.get_last_adjclose(ticker)  # .get_latest_bar_value(ticker)
                 bid, ask = close_price, close_price
 
             pt.update_value(bid, ask)
@@ -76,14 +76,14 @@ class Portfolio(object):
             if self.data_handler.istick():
                 bid, ask = self.data_handler.get_best_bid_ask(ticker)
             else:
-                close_price = self.data_handler.get_last_close(ticker)
-                bid, ask = close_price, close_price
+                adj_close_price = self.data_handler.get_last_adjclose(ticker)
+                bid, ask = adj_close_price, adj_close_price
 
             self.positions[ticker] = Stock(
                 order_type, ticker, quantity,
                 price, commission, bid, ask
             )
-            self._update_portfolio()
+            self.update_portfolio()
         else:
             print(
                 "Ticker %s is already in the positions list. "
@@ -110,7 +110,7 @@ class Portfolio(object):
             if self.data_handler.istick():
                 bid, ask = self.data_handler.get_best_bid_ask(ticker)
             else:
-                close_price = self.data_handler.get_last_close(ticker)  # get last adj close
+                close_price = self.data_handler.get_last_adjclose(ticker)  # get last adj close
                 bid, ask = close_price, close_price
 
             self.positions[ticker].update_value(bid, ask)  # TODO: move in the 'if' below?
@@ -121,7 +121,7 @@ class Portfolio(object):
                 self.realised_pnl += closed.realised_pnl
                 self.closed_positions.append(closed)
 
-            self._update_portfolio()
+            self.update_portfolio()
         else:
             print(
                 "Ticker %s not in the current position list. "

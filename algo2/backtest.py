@@ -5,9 +5,10 @@ from __future__ import (absolute_import, division, print_function,
 
 from algo2.utilities import queue
 from algo2.event import EventType
+import datetime as dt
 
 
-# noinspection PyPep8
+# TODO: set-up default values
 class Backtest(object):
     """
     Encapsulates the settings and components for

@@ -20,6 +20,7 @@ class Event(object):
 #        return self.type.name
     pass
 
+
 ##########################################
 class MarketEvent(Event):
     """

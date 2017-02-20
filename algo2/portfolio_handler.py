@@ -114,4 +114,4 @@ class PortfolioHandler(object):
         Update the portfolio to reflect current market value as
         based on last bid/ask of each ticker.
         """
-        self.portfolio._update_portfolio()
+        self.portfolio.update_portfolio()
